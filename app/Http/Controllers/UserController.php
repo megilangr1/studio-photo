@@ -120,8 +120,15 @@ class UserController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(User $user)
     {
-        //
+        try {
+            $delete = $user->delete();
+
+            session()->flash('warning', 'Data di-Hapus !');
+            return redirect(route('backend.user.index'));
+        } catch (\Exception $e) {
+            dd($e);
+        }
     }
 }
