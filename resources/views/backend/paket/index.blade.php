@@ -5,9 +5,9 @@
   <div class="col-12">
     <div class="card card-outline card-primary">
       <div class="card-header">
-        <h5 class="card-title"> <span class="fa fa-users text-primary"></span> &ensp; Data Pengguna</h5>
+        <h5 class="card-title"> <span class="fa fa-box text-primary"></span> &ensp; Data Paket</h5>
         <div class="card-tools">
-          <a href="{{ route('backend.user.create') }}" class="btn btn-xs btn-primary px-2">
+          <a href="{{ route('backend.paket.create') }}" class="btn btn-xs btn-primary px-2">
             <span class="fa fa-plus"></span> &ensp; Tambah Data
           </a>
         </div>
@@ -20,24 +20,24 @@
                 <thead>
                   <tr>
                     <th class="text-center" width="5%">No.</th>
-                    <th>Nama Akun Bmd</th>
-                    <th>E-Mail</th>
+                    <th>Nama Paket</th>
+                    <th>Harga</th>
                     <th class="text-center" width="5%">Aksi</th>
                   </tr>
                 </thead>
                 <tbody>
-                  @forelse ($users as $item)
+                  @forelse ($pakets as $item)
                     <tr>
-                      <td class="align-middle text-center">{{ ($users->currentpage()-1) * $users->perpage() + $loop->index + 1 }}.</td>
-                      <td class="align-middle">{{ $item->name }}</td>
-                      <td class="align-middle">{{ $item->email }}</td>
+                      <td class="align-middle text-center">{{ ($pakets->currentpage()-1) * $pakets->perpage() + $loop->index + 1 }}.</td>
+                      <td class="align-middle">{{ $item->nama_paket }}</td>
+                      <td class="align-middle">{{ $item->harga }}</td>
                       <td class="align-middle text-center">
                         <div class="btn-group">
-                          <a href="{{ route('backend.user.edit', $item->id) }}" class="btn btn-sm btn-warning borad">
+                          <a href="{{ route('backend.paket.edit', $item->id) }}" class="btn btn-sm btn-warning borad">
                             <span class="fa fa-edit"></span>
                           </a>
                           @if (auth()->user()->id != $item->id)
-                          <form action="{{ route('backend.user.destroy', $item->id) }}" method="post">
+                          <form action="{{ route('backend.paket.destroy', $item->id) }}" method="post">
                             @csrf
                             @method('DELETE')
                             <button type="submit" class="btn btn-sm btn-danger borad">
@@ -50,7 +50,7 @@
                     </tr>
                   @empty
                     <tr>
-                      <td colspan="6" class="align-middle text-center">Belum Ada Data Akun BMD.</td>
+                      <td colspan="6" class="align-middle text-center">Belum Data Paket.</td>
                     </tr>
                   @endforelse
                 </tbody>
@@ -63,7 +63,7 @@
         <div class="row">
           <div class="col-12">
             <div class="float-right">
-              {{ $users->links() }}
+              {{ $pakets->links() }}
             </div>
           </div>
         </div>

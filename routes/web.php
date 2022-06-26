@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BackendController;
+use App\Http\Controllers\PaketController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -30,4 +31,5 @@ Route::prefix('backend')->middleware('auth')->name('backend.')->group(function (
     Route::get('/', [BackendController::class, 'main'])->name('main');
 
     Route::resource('user', UserController::class);
+    Route::resource('paket', PaketController::class);
 });
