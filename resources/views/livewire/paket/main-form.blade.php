@@ -1,5 +1,5 @@
 <div>
-	<form action="{{ route('backend.paket.store') }}" method="post" wire:submit.prevent="buatData">
+	<form action="{{ route('backend.paket.store') }}" method="post" wire:submit.prevent="{{ $paket['edit'] == 0 ? 'buatData':'updateData' }}">
 		@csrf
 		<div class="row">
 			<div class="col-md-8">
@@ -257,11 +257,11 @@
 			</div>
 			<div class="col-md-4">
 				<button type="submit" class="btn btn-success btn-block">
-					<span class="fa fa-check"></span> &ensp; Buat Data
+					<span class="fa fa-check"></span> &ensp; {{ $paket['edit'] == 0 ? 'Buat Data' : 'Simpan Perubahan' }}
 				</button>
 			</div>
 			<div class="col-md-4">
-				<button type="reset" class="btn btn-danger btn-block">
+				<button type="button" class="btn btn-danger btn-block" wire:click="resetInput">
 					<span class="fa fa-undo"></span> &ensp; Reset Input
 				</button>
 			</div>

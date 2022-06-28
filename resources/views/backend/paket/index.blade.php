@@ -36,7 +36,6 @@
                           <a href="{{ route('backend.paket.edit', $item->id) }}" class="btn btn-sm btn-warning borad">
                             <span class="fa fa-edit"></span>
                           </a>
-                          @if (auth()->user()->id != $item->id)
                           <form action="{{ route('backend.paket.destroy', $item->id) }}" method="post">
                             @csrf
                             @method('DELETE')
@@ -44,7 +43,6 @@
                               <span class="fa fa-trash"></span>
                             </button>
                           </form>
-                          @endif
                         </div>
                       </td>
                     </tr>

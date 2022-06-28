@@ -1,0 +1,17 @@
+Pastikan Ter-Install :
+- PHP 7.4.*
+- Composer 
+- MySql (Xampp)
+
+Buat Database pada MySql dengan nama `studio_photo`
+
+Buka GitBash / CMD dan Ketik Command di-Bawah
+
+1. composer install 
+2. cp .env.example
+3. php artisan key:generate 
+4. php artisan optimize:clear 
+5. php artisan migrate:fresh --seed
+6. php artisan serve 
+
+Buka Browser > Buka http://localhost:8000

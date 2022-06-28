@@ -36,10 +36,7 @@ class PaketController extends Controller
      */
     public function store(Request $request)
     {
-        $this->validate($request, [
-            
-        ]);
-        dd($request->all());
+        abort(404);
     }
 
     /**
@@ -50,7 +47,7 @@ class PaketController extends Controller
      */
     public function show($id)
     {
-        //
+        abort(404);
     }
 
     /**
@@ -61,7 +58,15 @@ class PaketController extends Controller
      */
     public function edit($id)
     {
-        //
+        try {
+            $paket = Paket::with('jumlah_cetakan', 'biaya_lainnya')->where('id', '=', $id)->firstOrFail();
+            
+            return view('backend.paket.edit', compact('paket'));
+        } catch (\Exception $e) {
+            abort(404);
+        }
+
+        return view('backend.paket.edit', compact('paket'));
     }
 
     /**
@@ -73,7 +78,7 @@ class PaketController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        abort(404);
     }
 
     /**
@@ -84,6 +89,14 @@ class PaketController extends Controller
      */
     public function destroy($id)
     {
-        //
+        try {
+            $paket = Paket::where('id', '=', $id)->firstOrFail();
+            $paket->delete();
+
+            session()->flash('warning', 'Data di-Hapus !');
+            return redirect(route('backend.paket.index'));
+        } catch (\Exception $e) {
+            abort(404);
+        }
     }
 }
