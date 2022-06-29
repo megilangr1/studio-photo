@@ -2,7 +2,10 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BackendController;
+use App\Http\Controllers\KategoriController;
 use App\Http\Controllers\PaketController;
+use App\Http\Controllers\PropertiController;
+use App\Http\Controllers\StudioController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -32,4 +35,7 @@ Route::prefix('backend')->middleware('auth')->name('backend.')->group(function (
 
     Route::resource('user', UserController::class);
     Route::resource('paket', PaketController::class);
+    Route::resource('studio', StudioController::class);
+    Route::resource('kategori', KategoriController::class);
+    Route::resource('properti', PropertiController::class);
 });

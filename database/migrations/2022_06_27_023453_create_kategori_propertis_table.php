@@ -16,7 +16,7 @@ class CreateKategoriPropertisTable extends Migration
         Schema::create('kategori_propertis', function (Blueprint $table) {
             $table->id();
             $table->string('nama_kategori');
-            $table->string('katerangan');
+            $table->string('katerangan')->nullable();
             $table->timestamps();
         });
     }

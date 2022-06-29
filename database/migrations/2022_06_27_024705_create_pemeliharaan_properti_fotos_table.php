@@ -18,7 +18,7 @@ class CreatePemeliharaanPropertiFotosTable extends Migration
             $table->unsignedBigInteger('properti_id');
             $table->date('tanggal_pemeliharaan');
             $table->string('kondisi');
-            $table->text('keterangan');
+            $table->text('keterangan')->nullable();
             $table->timestamps();
         });
     }

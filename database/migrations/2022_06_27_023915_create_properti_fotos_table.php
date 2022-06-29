@@ -21,7 +21,7 @@ class CreatePropertiFotosTable extends Migration
             $table->date('tanggal_keluar')->nullable();
             $table->unsignedBigInteger('kategori_id');
             $table->string('kondisi');
-            $table->string('keterangan');
+            $table->string('keterangan')->nullable();
             $table->timestamps();
         });
     }

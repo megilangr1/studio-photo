@@ -16,7 +16,7 @@ class CreateStudiosTable extends Migration
         Schema::create('studios', function (Blueprint $table) {
             $table->id();
             $table->string('nama_studio');
-            $table->text('keterangan_studio');
+            $table->text('keterangan_studio')->nullable();
             $table->timestamps();
         });
     }

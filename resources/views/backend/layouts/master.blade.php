@@ -8,6 +8,29 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
   <link rel="stylesheet" href="{{ asset('assets') }}/plugins/fontawesome-free/css/all.min.css">
   <link rel="stylesheet" href="{{ asset('assets') }}/dist/css/adminlte.min.css">
+
+  <!-- Select2 -->
+  <link rel="stylesheet" href="{{ asset('assets') }}/plugins/select2/css/select2.min.css">
+  <link rel="stylesheet" href="{{ asset('assets') }}/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css">
+
+  <!-- Toastr -->
+  <link rel="stylesheet" href="{{ asset('assets') }}/plugins/toastr/toastr.min.css">
+  <style>
+    .select2-container--default .select2-selection--multiple .select2-selection__choice {
+      background-color: #2a2a2a !important;
+      border: 1px solid #aaa !important;
+      padding-left: 5px;
+      padding-right: 5px;
+    }
+    .select2-container .select2-selection--single {
+      height: 38px !important;
+    }
+    .select2-container--default .select2-selection--single .select2-selection__arrow {
+      height: 38px !important;
+    }
+
+    
+  </style>
   @livewireStyles
 
   <style>
@@ -122,6 +145,24 @@
                   <p>Daftar Paket</p>
                 </a>
               </li>
+              <li class="nav-item">
+                <a href="{{ route('backend.studio.index') }}" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Daftar Studio</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="{{ route('backend.kategori.index') }}" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Kategori Properti</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="{{ route('backend.properti.index') }}" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Daftar Properti</p>
+                </a>
+              </li>
             </ul>
           </li>
         </ul>
@@ -149,7 +190,58 @@
 <script src="{{ asset('assets') }}/plugins/jquery/jquery.min.js"></script>
 <script src="{{ asset('assets') }}/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
 <script src="{{ asset('assets') }}/dist/js/adminlte.min.js"></script>
+
+<!-- Select2 -->
+<script src="{{ asset('assets') }}/plugins/select2/js/select2.full.min.js"></script>
+<!-- Toastr -->
+<script src="{{ asset('assets') }}/plugins/toastr/toastr.min.js"></script>
 @livewireScripts
+
+
+@if (session()->has('success'))
+  <script>
+    toastr.success("{!! session('success') !!}", "Berhasil", {timeOut: 10000});
+  </script>
+@endif
+
+@if (session()->has('info'))
+  <script>
+    toastr.info("{!! session('info') !!}", "Pemberitahuan", {timeOut: 10000});
+  </script>
+@endif
+
+@if (session()->has('warning'))
+  <script>
+    toastr.warning("{!! session('warning') !!}", "Peringatan", {timeOut: 10000});
+  </script>
+@endif
+
+@if (session()->has('error'))
+  <script>
+    toastr.error("{!! session('error') !!}", "Kesalahan", {timeOut: 10000});
+  </script>
+@endif
+
+@isset($livewire)
+  @livewireScripts
+  <script>
+    Livewire.on('success', data => {
+      toastr.success(data, "Berhasil");
+    });
+  
+    Livewire.on('info', data => {
+      toastr.info(data, "Pemberitahuan");
+    });
+  
+    Livewire.on('warning', data => {
+      toastr.warning(data, "Peringatan !");
+    });
+  
+    Livewire.on('error', data => {
+      toastr.error(data, "Kesalahan !!");
+    });
+  </script>
+@endisset
 
 @yield('script')
 @stack('script')

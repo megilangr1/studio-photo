@@ -107,7 +107,7 @@ class UserController extends Controller
                 'password' => $password
             ]);
 
-            session()->flash('success', 'Data Perubahan di-Simpan !');
+            session()->flash('success', 'Perubahan Data di-Simpan !');
             return redirect(route('backend.user.index'));
         } catch (\Exception $e) {
             dd($e);
