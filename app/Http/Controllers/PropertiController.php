@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helper\MainHelper;
 use App\Models\KategoriProperti;
 use App\Models\PropertiFoto;
 use App\Models\Studio;
@@ -36,7 +37,10 @@ class PropertiController extends Controller
         ]);
 
         try {
+            $helper = new MainHelper;
+
             $createData = PropertiFoto::create([
+                "kode_properti" => $helper->generateId('PROPS'),
                 "studio_id" => $request->studio_id,
                 "kategori_id" => $request->kategori_id,
                 "nama_properti" => $request->nama_properti,

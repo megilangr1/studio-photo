@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreatePropertiFotosTable extends Migration
+class CreatePembelianPropertiDetailsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,17 +13,14 @@ class CreatePropertiFotosTable extends Migration
      */
     public function up()
     {
-        Schema::create('properti_fotos', function (Blueprint $table) {
+        Schema::create('pembelian_properti_details', function (Blueprint $table) {
             $table->id();
-            $table->string('kode_properti');
-            $table->unsignedBigInteger('transaction_id')->nullable();
-            $table->unsignedBigInteger('studio_id');
+            $table->unsignedBigInteger('pembelian_properti_id');
             $table->string('nama_properti');
-            $table->date('tanggal_masuk');
-            $table->date('tanggal_keluar')->nullable();
             $table->unsignedBigInteger('kategori_id');
-            $table->string('kondisi');
-            $table->string('keterangan')->nullable();
+            $table->double('harga');
+            $table->double('jumlah');
+            $table->text('keterangan')->nullable();
             $table->timestamps();
         });
     }
@@ -35,6 +32,6 @@ class CreatePropertiFotosTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('properti_fotos');
+        Schema::dropIfExists('pembelian_properti_details');
     }
 }

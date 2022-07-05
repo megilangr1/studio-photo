@@ -75,13 +75,13 @@
             </div>
             <div class="col-md-12">
               <div class="form-group">
-                <label for="keterangan_studio">Keterangan Lainnya Studio : </label>
-                <textarea name="keterangan_studio" id="keterangan_studio" cols="1" rows="1" class="form-control {{ $errors->has('keterangan_studio') ? 'is-invalid':'' }}" placeholder="Masukan Keterangan Studio">{{ old('keterangan_studio') }}</textarea>
+                <label for="keterangan">Keterangan Lainnya : </label>
+                <textarea name="keterangan" id="keterangan" cols="1" rows="1" class="form-control {{ $errors->has('keterangan') ? 'is-invalid':'' }}" placeholder="Masukan Keterangan Properti">{{ old('keterangan') }}</textarea>
               </div>
             </div>
             <div class="col-md-4">
               <button type="submit" class="btn btn-success btn-block">
-                <span class="fa fa-check"></span> &ensp; Tambah Data Studio
+                <span class="fa fa-check"></span> &ensp; Tambah Data Properti
               </button>
             </div>
           </div>

@@ -20,6 +20,7 @@
                 <thead>
                   <tr>
                     <th class="text-center" width="5%">No.</th>
+                    <th>Kode Properti</th>
                     <th>Nama Properti</th>
                     <th>Tanggal Masuk</th>
                     <th>Kondisi</th>
@@ -31,6 +32,7 @@
                   @forelse ($propertis as $item)
                     <tr>
                       <td class="align-middle text-center">{{ ($propertis->currentpage()-1) * $propertis->perpage() + $loop->index + 1 }}.</td>
+                      <td class="align-middle">{{ $item->kode_properti }}</td>
                       <td class="align-middle">{{ $item->nama_properti }}</td>
                       <td class="align-middle">{{ date('d/m/Y', strtotime($item->tanggal_masuk)) }}</td>
                       <td class="align-middle">{{ $item->kondisi }}</td>

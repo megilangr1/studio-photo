@@ -5,7 +5,7 @@
   <div class="col-12">
     <div class="card card-outline card-primary">
       <div class="card-header">
-        <h5 class="card-title"> <span class="fa fa-users text-primary"></span> &ensp; Buat Data Studio</h5>
+        <h5 class="card-title"> <span class="fa fa-users text-primary"></span> &ensp; Buat Data Kategori</h5>
         <div class="card-tools">
           <a href="{{ route('backend.kategori.index') }}" class="btn btn-xs btn-danger px-2">
             <span class="fa fa-arrow-left"></span> &ensp; Kembali
@@ -28,7 +28,7 @@
             <div class="col-md-7">
               <div class="form-group">
                 <label for="keterangan">Keterangan Lainnya : </label>
-                <textarea name="keterangan" id="keterangan" cols="1" rows="1" class="form-control {{ $errors->has('keterangan') ? 'is-invalid':'' }}" placeholder="Masukan Keterangan Studio">{{ old('keterangan') }}</textarea>
+                <textarea name="keterangan" id="keterangan" cols="1" rows="1" class="form-control {{ $errors->has('keterangan') ? 'is-invalid':'' }}" placeholder="Masukan Keterangan Kategori">{{ old('keterangan') }}</textarea>
               </div>
             </div>
             <div class="col-md-4">
