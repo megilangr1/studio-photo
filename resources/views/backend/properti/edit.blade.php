@@ -45,7 +45,7 @@
                 </span>
               </div>
             </div>
-            <div class="col-md-8">
+            <div class="col-md-4">
               <div class="form-group">
                 <label for="nama_properti">Nama Properti : </label>
                 <input type="text" name="nama_properti" id="nama_properti" class="form-control {{ $errors->has('nama_properti') ? 'is-invalid':'' }}" value="{{ $properti->nama_properti }}" placeholder="Masukan Nama Properti..." required>
@@ -61,6 +61,17 @@
                 <span class="invalid-feedback">
                   {{ $errors->first('tanggal_masuk') }}
                 </span>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="form-group">
+                <label for="kondisi">Kondisi : </label>
+                <select name="kondisi" id="kondisi" class="form-control" required>
+                  <option value="">- Pilih Kondisi -</option>
+                  <option value="Baik" {{ $properti->kondisi == 'Baik' ? 'selected':'' }}>Baik</option>
+                  <option value="Rusak Ringan" {{ $properti->kondisi == 'Rusak Ringan' ? 'selected':'' }}>Rusak Ringan</option>
+                  <option value="Rusak Berat / Tidak Dapat di-Pakai" {{ $properti->kondisi == 'Rusak Berat / Tidak Dapat di-Pakai' ? 'selected':'' }}>Rusak Berat / Tidak Dapat di-Pakai</option>
+                </select>
               </div>
             </div>
             <div class="col-md-12">

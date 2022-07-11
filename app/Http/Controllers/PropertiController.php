@@ -70,6 +70,7 @@ class PropertiController extends Controller
             "kategori_id" => 'required|exists:kategori_propertis,id',
             "nama_properti" => 'required|string',
             "tanggal_masuk" => 'required|string',
+            "kondisi" => 'required|string',
             'keterangan' => 'nullable|string',
         ]);
 
@@ -79,6 +80,7 @@ class PropertiController extends Controller
                 "kategori_id" => $request->kategori_id,
                 "nama_properti" => $request->nama_properti,
                 "tanggal_masuk" => $request->tanggal_masuk,
+                "kondisi" => $request->kondisi,
                 'keterangan' => $request->keterangan,
             ]);
 

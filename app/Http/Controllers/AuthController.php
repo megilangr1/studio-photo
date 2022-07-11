@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class AuthController extends Controller
 {
@@ -32,6 +33,16 @@ class AuthController extends Controller
         }else{
             session()->flash('error-login', 'Invalid credentials');
             return redirect()->back();
+        }
+    }
+
+    public function logout(Request $request)
+    {
+        $authCheck = Auth::check();
+        if ($authCheck) {
+            $logout = Auth::logout();
+
+            return redirect(route('frontend'));
         }
     }
 }

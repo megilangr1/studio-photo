@@ -65,7 +65,7 @@
             <div class="col-md-4">
               <div class="form-group">
                 <label for="kondisi">Kondisi : </label>
-                <select name="kondisi" id="kondisi" class="form-control">
+                <select name="kondisi" id="kondisi" class="form-control" required>
                   <option value="">- Pilih Kondisi -</option>
                   <option value="Baik">Baik</option>
                   <option value="Rusak Ringan">Rusak Ringan</option>

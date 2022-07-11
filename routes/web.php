@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BackendController;
 use App\Http\Controllers\KategoriController;
+use App\Http\Controllers\MainController;
 use App\Http\Controllers\PaketController;
 use App\Http\Controllers\PembelianPropertiController;
 use App\Http\Controllers\PropertiController;
@@ -21,15 +22,11 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    // return view('welcome');
-    
-    return redirect(route('login'));
-});
+Route::get('/', [MainController::class, 'frontEnd'])->name('frontend');
 
 Route::get('/login', [AuthController::class, 'login'])->name('login');
 Route::post('/login', [AuthController::class, 'loginProcess'])->name('login-process');
-Route::post('/logout',[LoginController::class, 'logout'])->name('logout');
+Route::post('/logout',[AuthController::class, 'logout'])->name('logout');
 
 Route::prefix('backend')->middleware('auth')->name('backend.')->group(function () {
     Route::get('/', [BackendController::class, 'main'])->name('main');
