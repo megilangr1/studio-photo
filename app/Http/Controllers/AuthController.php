@@ -33,7 +33,12 @@ class AuthController extends Controller
 
         $user = User::where('email',$request->email)->first();
         if (auth()->attempt($credentials)) {
-            return redirect()->route('backend.main');
+            $checkRoles = $user->getRoleNames()->toArray();
+            if (in_array('Owner', $checkRoles) || in_array('Administrator', $checkRoles)) {
+                return redirect()->route('backend.main');
+            } else {
+                return redirect(route('frontend'));
+            }
         }else{
             session()->flash('error-login', 'Invalid credentials');
             return redirect()->back();

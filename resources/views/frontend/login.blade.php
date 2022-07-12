@@ -19,7 +19,7 @@
               <div class="col-md-12">
                 <div class="form-group py-2">
                   <label for="email" class="py-2">E-Mail :</label>
-                  <input type="email" name="email" id="email" class="form-control {{ $errors->has('email') ? 'is-invalid':'' }}" value="{{ old('email') }}" placeholder="Masukan E-Mail..." required>
+                  <input type="email" name="email" id="email" class="form-control {{ $errors->has('email') ? 'is-invalid':'' }}" value="{{ old('email') }}" placeholder="Masukan E-Mail..." required autofocus>
                   <div class="invalid-feedback">
                     {{ $errors->first('email') }}
                   </div>
@@ -40,6 +40,12 @@
                     Login Studio Photo
                   </button>
                 </div>
+                
+                @if (count($errors) > 0 || session()->has('error-login'))
+                  <div class="alert alert-warning text-center">
+                    Username / Password Salah !
+                  </div>
+                @endif
               </div>
             </div>
           </form>

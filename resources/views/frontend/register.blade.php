@@ -19,7 +19,7 @@
               <div class="col-md-7">
                 <div class="form-group py-2">
                   <label for="name" class="py-2">Nama Lengkap :</label>
-                  <input type="text" name="name" id="name" class="form-control {{ $errors->has('name') ? 'is-invalid':'' }}" value="{{ old('name') }}" placeholder="Masukan Nama Lengkap..." required>
+                  <input type="text" name="name" id="name" class="form-control {{ $errors->has('name') ? 'is-invalid':'' }}" value="{{ old('name') }}" placeholder="Masukan Nama Lengkap..." required autofocus>
                   <div class="invalid-feedback">
                     {{ $errors->first('name') }}
                   </div>
