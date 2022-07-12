@@ -26,9 +26,14 @@ Route::get('/', [MainController::class, 'frontEnd'])->name('frontend');
 
 Route::get('/login', [AuthController::class, 'login'])->name('login');
 Route::post('/login', [AuthController::class, 'loginProcess'])->name('login-process');
+
+Route::get('register', [AuthController::class, 'register'])->name('register');
+Route::post('register', [AuthController::class, 'registration'])->name('registration');
+
 Route::post('/logout',[AuthController::class, 'logout'])->name('logout');
 
-Route::prefix('backend')->middleware('auth')->name('backend.')->group(function () {
+
+Route::prefix('backend')->middleware(['auth', 'role:Owner', 'role:Administrator'])->name('backend.')->group(function () {
     Route::get('/', [BackendController::class, 'main'])->name('main');
 
     Route::resource('user', UserController::class);

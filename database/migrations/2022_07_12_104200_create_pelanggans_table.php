@@ -15,9 +15,10 @@ class CreatePelanggansTable extends Migration
     {
         Schema::create('pelanggans', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('user_id');
             $table->string('nama_lengkap');
             $table->string('nomor_hp');
-            $table->text('alamat');
+            $table->text('alamat')->nullable();
             $table->timestamps();
         });
     }
