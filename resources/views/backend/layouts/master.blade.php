@@ -15,6 +15,8 @@
 
   <!-- Toastr -->
   <link rel="stylesheet" href="{{ asset('assets') }}/plugins/toastr/toastr.min.css">
+  <!-- Ekko Lightbox -->
+  <link rel="stylesheet" href="{{ asset('assets') }}/plugins/ekko-lightbox/ekko-lightbox.css">
   <style>
     .select2-container--default .select2-selection--multiple .select2-selection__choice {
       background-color: #2a2a2a !important;
@@ -228,8 +230,20 @@
 <script src="{{ asset('assets') }}/plugins/select2/js/select2.full.min.js"></script>
 <!-- Toastr -->
 <script src="{{ asset('assets') }}/plugins/toastr/toastr.min.js"></script>
+<!-- Ekko Lightbox -->
+<script src="{{ asset('assets') }}/plugins/ekko-lightbox/ekko-lightbox.min.js"></script>
 @livewireScripts
 
+<script>
+  $(document).ready(function () {
+    $(document).on('click', '[data-toggle="lightbox"]', function(event) {
+      event.preventDefault();
+      $(this).ekkoLightbox({
+        alwaysShowClose: true
+      });
+    });
+  });
+</script>
 
 @if (session()->has('success'))
   <script>

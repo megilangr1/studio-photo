@@ -7,9 +7,12 @@ use App\Models\JumlahCetakan;
 use App\Models\Paket;
 use Illuminate\Support\Facades\DB;
 use Livewire\Component;
+use Livewire\WithFileUploads;
 
 class MainForm extends Component
 {
+    use WithFileUploads;
+
     public $editPaket = [];
 
     public $paket = [];
@@ -24,10 +27,23 @@ class MainForm extends Component
         'informasi_tambahan' => null,
         'keterangan_lainnya' => null,
 
+        'file_paket' => null,
+        'fn_paket' => null,
+
+        'edit_file' => null,
+        
         'jumlah_cetakan' => [],
         'biaya_lainnya' => [],
         'edit' => 0
     ];
+
+    public function updatedPaket($value, $key)
+    {
+        if ($key == 'file_paket' && $value != null) {
+            $this->resetErrorBag('paket.file_paket');
+            $this->paket['fn_paket'] = $value->getClientOriginalName();
+        }
+    }
 
     public function mount($paket = [])
     {
@@ -45,6 +61,8 @@ class MainForm extends Component
             $this->paket['harga_tambah_foto'] = $paket['harga_tambah_foto'];
             $this->paket['informasi_tambahan'] = $paket['informasi_tambahan'];
             $this->paket['keterangan_lainnya'] = $paket['keterangan_lainnya'];
+
+            $this->paket['edit_file'] = $paket['file_paket'];
 
             if (count($paket['jumlah_cetakan']) > 0) {
                 foreach ($paket['jumlah_cetakan'] as $key => $value) {
@@ -117,6 +135,7 @@ class MainForm extends Component
             'paket.harga_tambah_foto' => 'required|numeric',
             'paket.informasi_tambahan' => 'nullable|string',
             'paket.keterangan_lainnya' => 'nullable|string',
+            'paket.file_paket' => 'nullable|mimes:png,jpg,jpeg|max:10240',
 
             'paket.jumlah_cetakan' => 'nullable|array',
             'paket.jumlah_cetakan.*.jumlah_cetakan' => 'required|numeric',
@@ -130,8 +149,18 @@ class MainForm extends Component
         ]);
 
         DB::beginTransaction();
-
         try { 
+            $storage_disk_file = 'images';
+            // File Pembayaran
+            $uploadFilePaket = 0;
+            if ($this->paket['file_paket'] != null) {
+                $nama_file = preg_replace("/[^A-Za-z0-9 ]/", '', str_replace(' ', '_', $this->paket['nama_paket']));
+
+                $file_paket = $nama_file . '-'. time() . '.' . $this->paket['file_paket']->getClientOriginalExtension();
+                $storage_path_file_paket = $storage_disk_file .'/' . $file_paket;
+                $uploadFilePaket = 1;
+            }
+
             $createPaket = Paket::create([
                 'nama_paket' => $this->paket['nama_paket'],
                 'harga' => $this->paket['harga'],
@@ -141,6 +170,8 @@ class MainForm extends Component
                 'pose' => $this->paket['pose'],
                 'harga_tambah_foto' => $this->paket['harga_tambah_foto'],
                 'informasi_tambahan' => $this->paket['informasi_tambahan'],
+                'file_paket' => $file_paket ?? null,
+                'file_path' => $storage_path_file_paket ?? null,
                 'keterangan_lainnya' => $this->paket['keterangan_lainnya'],
             ]);
 
@@ -165,6 +196,8 @@ class MainForm extends Component
                     ]);
                 }
             }
+
+            if ($uploadFilePaket) { $uploadFilePaket = $this->paket['file_paket']->storeAs('/', $file_paket, $storage_disk_file); }
 
             DB::commit();
             session()->flash('success', 'Data Berhasil di-Buat !');
@@ -193,6 +226,7 @@ class MainForm extends Component
             'paket.harga_tambah_foto' => 'required|numeric',
             'paket.informasi_tambahan' => 'nullable|string',
             'paket.keterangan_lainnya' => 'nullable|string',
+            'paket.file_paket' => 'nullable|mimes:png,jpg,jpeg|max:10240',
 
             'paket.jumlah_cetakan' => 'nullable|array',
             'paket.jumlah_cetakan.*.jumlah_cetakan' => 'required|numeric',
@@ -211,6 +245,17 @@ class MainForm extends Component
         try { 
             $getPaket = Paket::where('id', '=', $this->paket['edit'])->firstOrFail();
 
+            $storage_disk_file = 'images';
+            // File Pembayaran
+            $uploadFilePaket = 0;
+            if ($this->paket['file_paket'] != null) {
+                $nama_file = preg_replace("/[^A-Za-z0-9 ]/", '', str_replace(' ', '_', $this->paket['nama_paket']));
+
+                $file_paket = $nama_file . '-'. time() . '.' . $this->paket['file_paket']->getClientOriginalExtension();
+                $storage_path_file_paket = $storage_disk_file .'/' . $file_paket;
+                $uploadFilePaket = 1;
+            }
+
             $updatePaket = $getPaket->update([
                 'nama_paket' => $this->paket['nama_paket'],
                 'harga' => $this->paket['harga'],
@@ -220,6 +265,8 @@ class MainForm extends Component
                 'pose' => $this->paket['pose'],
                 'harga_tambah_foto' => $this->paket['harga_tambah_foto'],
                 'informasi_tambahan' => $this->paket['informasi_tambahan'],
+                'file_paket' => $file_paket ?? null,
+                'file_path' => $storage_path_file_paket ?? null,
                 'keterangan_lainnya' => $this->paket['keterangan_lainnya'],
             ]);
 
@@ -247,6 +294,8 @@ class MainForm extends Component
                 }
             }
 
+            if ($uploadFilePaket) { $uploadFilePaket = $this->paket['file_paket']->storeAs('/', $file_paket, $storage_disk_file); }
+
             DB::commit();
             session()->flash('success', 'Data Berhasil di-Buat !');
 
@@ -254,6 +303,17 @@ class MainForm extends Component
         } catch (\Exception $e) {
             DB::rollBack();
             dd($e);
+        }
+    }
+
+    public function resetFile()
+    {
+        if (isset($this->paket['file_paket'])) {
+            $this->paket['file_paket'] = null;
+        }
+
+        if (isset($this->paket['fn_paket'])) {
+            $this->paket['fn_paket'] = null;
         }
     }
 }

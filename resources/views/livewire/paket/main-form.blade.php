@@ -104,12 +104,38 @@
 					</div>
 				</div>
 			</div>
-			<div class="col-md-12">
+			<div class="col-md-8">
 				<div class="form-group">
 					<label for="keterangan_lainnya">Keterangan Lainnya :</label>
-					<textarea wire:model="paket.keterangan_lainnya" name="keterangan_lainnya" id="keterangan_lainnya" cols="1" rows="1" class="form-control borad {{ $errors->has('paket.keterangan_lainnya') }}">{{ old('keterangan_lainnya') }}</textarea>
+					<textarea wire:model="paket.keterangan_lainnya" name="keterangan_lainnya" id="keterangan_lainnya" cols="1" rows="1" class="form-control borad {{ $errors->has('paket.keterangan_lainnya') }}" placeholder="Masukan Keterangan Lainnya...">{{ old('keterangan_lainnya') }}</textarea>
 					<div class="invalid-feedback">
 						{{ $errors->first('paket.keterangan_lainnya') }}
+					</div>
+				</div>
+			</div>
+			<div class="col-md-4">
+				<div class="form-group"> 
+					<label for="file_paket">File Dokumen:</label>
+					<div class="float-right">
+						@if ($paket['file_paket'] != null)
+							<span class="badge badge-success mx-1" style="line-height: normal !important;" data-toggle="offcanvas" role="button" data-tooltip="tooltip" title="Klik Untuk Membatalkan File Upload" wire:click="resetFile('bap')">File di-Unggah</span>
+						@endif
+						@if ($editPaket != null && $editPaket['file_paket'] != null)
+							<a href="{{ asset($editPaket['file_path']) }}" data-toggle="lightbox" data-title="{{ $editPaket['nama_paket'] }}">
+								<span id="see_file_bap" class="btn badge badge-primary mx-1" style="line-height: normal !important;" data-toggle="offcanvas" role="button" data-tooltip="tooltip" title="Klik Untuk Melihat File Saat Ini">File Saat Ini</span>
+							</a>
+						@endif
+					</div>
+					<div style="{{ $errors->has('paket.file_paket') ? 'border: 1px solid #dc3545 !important; border-radius:4px;':'' }}">
+						<div class="input-group" style="">
+							<div class="custom-file">
+								<input type="file" wire:model="paket.file_paket" class="custom-file-input" name="file_paket" id="file_paket">
+								<label class="custom-file-label borad" id="upload_bastbp_label" for="file_paket" >{{ $paket['fn_paket'] != null ? $paket['fn_paket'] : 'Silahkan Pilih File Untuk di-Upload.' }}</label>
+							</div>
+						</div>
+					</div>
+					<div class="text-danger text-xs pt-1">
+						{{ $errors->first('paket.file_paket') }}
 					</div>
 				</div>
 			</div>
