@@ -41,7 +41,7 @@
 
         <div class="cta d-none d-md-flex align-items-center">
           @if (auth()->user())
-            <a href="#" class="scrollto">Hi, {{ auth()->user()->name }}</a>
+            <a href="{{ in_array('Administrator', auth()->user()->getRoleNames()->toArray()) ? route('backend.main') : '#' }}" class="scrollto">Hi, {{ auth()->user()->name }}</a>
             <a class="scrollto" href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
               Logout
             </a>

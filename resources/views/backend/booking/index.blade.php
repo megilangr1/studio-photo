@@ -5,9 +5,9 @@
   <div class="col-12">
     <div class="card card-outline card-primary">
       <div class="card-header">
-        <h5 class="card-title"> <span class="fa fa-box text-primary"></span> &ensp; Data Paket</h5>
+        <h5 class="card-title"> <span class="fa fa-box text-primary"></span> &ensp; Data Booking / Reservasi Pemotretan</h5>
         <div class="card-tools">
-          <a href="{{ route('backend.paket.create') }}" class="btn btn-xs btn-primary px-2">
+          <a href="{{ route('backend.booking.create') }}" class="btn btn-xs btn-primary px-2">
             <span class="fa fa-plus"></span> &ensp; Tambah Data
           </a>
         </div>
