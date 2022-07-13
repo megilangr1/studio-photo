@@ -198,6 +198,12 @@
                   <p>Pembelian Properti</p>
                 </a>
               </li>
+              <li class="nav-item">
+                <a href="{{ route('backend.booking.index') }}" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Booking / Pemesanan</p>
+                </a>
+              </li>
             </ul>
           </li>
         </ul>

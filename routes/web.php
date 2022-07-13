@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BackendController;
+use App\Http\Controllers\BookingController;
 use App\Http\Controllers\KategoriController;
 use App\Http\Controllers\MainController;
 use App\Http\Controllers\PaketController;
@@ -50,4 +51,6 @@ Route::prefix('backend')->middleware(['auth', 'role:Owner', 'role:Administrator'
         Route::put('/{pembelian}/update', [PembelianPropertiController::class, 'update'])->name('update');
         Route::delete('/{pembelian}/destroy', [PembelianPropertiController::class, 'destroy'])->name('destroy');
     });
+
+    Route::resource('booking', BookingController::class);
 });
