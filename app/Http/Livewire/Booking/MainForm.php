@@ -8,7 +8,30 @@ use Livewire\Component;
 
 class MainForm extends Component
 {
-    public $jam = [
+    public $jam = [];
+    public $dataPaket = [];
+
+    public $pemesanan = [];
+    public $paket = [];
+
+    public $reservedJam = [];
+
+    public $params = [
+        'nama_pemesan',
+        'tanggal_booking',
+        'jam_mulai',
+        'jam_selesai',
+        'id_paket',
+        'id_studio',
+        'jumlah_orang',
+        'nominal_booking',
+        'rekening_transfer',
+        'nominal_dp',
+        'status_bayar',
+        'file_bukti_pembayaran',
+        'file_path'
+    ];
+    public $defaultJam = [
         "10:00",
         "10:30",
         "11:00",
@@ -31,28 +54,6 @@ class MainForm extends Component
         "19:30",
         "20:00",
         "20:30",
-    ];
-    public $dataPaket = [];
-
-    public $pemesanan = [];
-    public $paket = [];
-
-    public $reservedJam = [];
-
-    public $params = [
-        'nama_pemesan',
-        'tanggal_booking',
-        'jam_mulai',
-        'jam_selesai',
-        'id_paket',
-        'id_studio',
-        'jumlah_orang',
-        'nominal_booking',
-        'rekening_transfer',
-        'nominal_dp',
-        'status_bayar',
-        'file_bukti_pembayaran',
-        'file_path'
     ];
 
     protected $listeners = [
@@ -79,36 +80,59 @@ class MainForm extends Component
 
     public function getFreeTime($date)
     {
-        $booking = Booking::select('jam_mulai', 'durasi', 'jam_selesai')->where('tanggal_booking', '=', $date)->get();
-        if (count($booking) > 0) {
-            $reserved = [];
+        $this->jam = $this->defaultJam;
+        $booking = Booking::select('jam_mulai', 'durasi', 'jam_selesai')->where('tanggal_booking', '=', $date)->whereIn('status_bayar', ['1', '2'])->get();
+        $reserved = [];
 
-            foreach ($booking as $key => $value) {
-                $detail = $value->toArray();
-                $jam = explode(":", $detail['jam_mulai']);
-                array_push($reserved, $detail['jam_mulai']);
-
-                // $durasi = (double) $detail['durasi'] / 60;
-                $durasi = 45 / 60;
-                dd([$durasi, $durasi * 60]);
-
-                switch ($durasi) {
-                    case $durasi <= 30:
-                        $res = $jam[0] . ':30';
-                        array_push($reserved, $res);
-                        break;
-                    case $durasi > 30 && $durasi < 60:
-
-                        break;
-                    default:
-
-                        break;
-                }
+        // Booking
+        if ($date == date('Y-m-d')) {
+            $jamSekarang = date('H:i');
+            $jamSekarang = explode(':', $jamSekarang);
+            $jamS = (int) $jamSekarang[0];
+            $menitS = (int) $jamSekarang[1];
+    
+            if ($menitS <= 30) {
+                $jamSekarang = $jamS . ':30';
+            } else if ($menitS > 30 && $menitS <= 60) {
+                $jamSekarang = ($jamS + 1) . ':00';
+            } else {
+                $jamSekarang = $jamS . $menitS;
             }
-            dd($booking->toArray());
-
-            $this->reservedJam = $booking->toArray();
+            $jamSekarang = array_search($jamSekarang, $this->jam);
+            $reserve = array_slice($this->jam, 0, ($jamSekarang - 0));
+            $reserved = array_merge($reserved, $reserve);
         }
+
+        if (count($booking) > 0) {
+            $data = $booking->toArray();
+            foreach ($data as $key => $value) {
+                $jamMulai = array_search($value['jam_mulai'], $this->jam);
+                $jamSelesai = explode(':', $value['jam_selesai']);
+                $jam = (int) $jamSelesai[0];
+                $menit = (int) $jamSelesai[1];
+
+                if ($menit <= 30) {
+                    $jamSelesai = $jam . ':30';
+                } else if ($menit > 30 && $menit <= 60) {
+                    $jamSelesai = ($jam + 1) . ':00';
+                } else {
+                    $jamSelesai = $jam . $menit;
+                }
+
+                $jamSelesai = array_search($jamSelesai, $this->jam);
+                $reserve = array_slice($this->jam, $jamMulai, ($jamSelesai - $jamMulai) + 1);
+                $reserved = array_merge($reserved, $reserve);
+            }
+        }
+        foreach ($reserved as $key => $value) {
+            $check = array_search($value, $this->jam);
+            if ($check !== FALSE) {
+                unset($this->jam[$check]);
+            }
+        }
+
+        // dd($this->jam);
+        $this->emit('refreshJam', $this->jam);
     }
 
     public function getPaket()
@@ -124,7 +148,11 @@ class MainForm extends Component
 
     public function setJam($value)
     {
-        // dd($value);
+        if ($value != "") {
+            $jamMulai = date("H:i", strtotime($value));
+            $jamSelesai = date("H:i", strtotime("+".$this->paket['durasi'] ?? 0 .' minutes', strtotime($value)));
+            dd($jamSelesai);
+        }
     }
 
     public function setPaket($value)
