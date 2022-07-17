@@ -56,9 +56,16 @@ class BookingController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit(Booking $booking)
+    public function edit($id)
     {
-        return view('backend.booking.edit', compact('booking'));
+        try {
+            $booking = Booking::with('addOn', 'hasilFoto')->where('id', '=', $id)->firstOrFail();
+
+            return view('backend.booking.edit', compact('booking'));
+        } catch (\Exception $e) {
+            abort(404);
+        }
+
     }
 
     /**
@@ -81,6 +88,46 @@ class BookingController extends Controller
      */
     public function destroy($id)
     {
-        //
+        try {
+            $booking = Booking::where('id', '=', $id)->firstOrFail();
+            $booking->delete();
+
+            session()->flash('warning', 'Data Reservasi di-Hapus !');
+            return redirect(route('backend.booking.index'));
+        } catch (\Exception $e) {
+            dd($e);
+        }
+    }
+
+    public function confirm($id)
+    {
+        try {
+            $booking = Booking::where('id', '=', $id)->firstOrFail();
+            $updateBooking = $booking->update([
+                'admin_id' => auth()->user()->id,
+                'status_booking' => 1
+            ]);
+
+            session()->flash('success', 'Status Booking / Reservasi di-Konfirmasi !');
+            return redirect(route('backend.booking.index'));
+        } catch (\Exception $e) {
+            dd($e);
+        }
+    }
+
+    public function reject($id)
+    {
+        try {
+            $booking = Booking::where('id', '=', $id)->firstOrFail();
+            $updateBooking = $booking->update([
+                'admin_id' => auth()->user()->id,
+                'status_booking' => 2
+            ]);
+
+            session()->flash('success', 'Status Booking / Reservasi di-Tolak !');
+            return redirect(route('backend.booking.index'));
+        } catch (\Exception $e) {
+            dd($e);
+        }
     }
 }

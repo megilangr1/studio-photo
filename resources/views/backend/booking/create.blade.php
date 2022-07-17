@@ -7,7 +7,7 @@
       <div class="card-header">
         <h5 class="card-title"> <span class="fa fa-boxes text-primary"></span> &ensp; Buat Data Booking / Reservasi Pemotretan</h5>
         <div class="card-tools">
-          <a href="{{ route('backend.paket.index') }}" class="btn btn-xs btn-danger px-2">
+          <a href="{{ route('backend.booking.index') }}" class="btn btn-xs btn-danger px-2">
             <span class="fa fa-arrow-left"></span> &ensp; Kembali
           </a>
         </div>

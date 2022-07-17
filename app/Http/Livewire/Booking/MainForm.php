@@ -68,6 +68,11 @@ class MainForm extends Component
     {
         $this->mode = $mode;
         $this->pemesanan = $this->params;
+
+        if ($mode == 'frontend') {
+            $this->pemesanan['nama_pemesan'] = Auth::user()->name;
+        }
+
         $this->getPaket();
     }
 
@@ -208,9 +213,11 @@ class MainForm extends Component
         try {
             $adminId = null;
             $userId = null;
+            $status_booking = 0;
             
             if ($this->mode == 'backend') {
                 $adminId = Auth::user()->id;
+                $status_booking = 1;
             } else {
                 $userId = Auth::user()->id;
             }
@@ -229,8 +236,9 @@ class MainForm extends Component
                 'nominal_booking' => $this->pemesanan['nominal_booking'],
                 'rekening_transfer' => null,
                 'nominal_dp' => null,
+                'total_pembayaran' => $this->pemesanan['nominal_booking'],
                 'status_bayar' => 0,
-                'status_booking' => 0,
+                'status_booking' => $status_booking,
                 'file_bukti_pembayaran' => null,
                 'file_path' => null,
             ]);
@@ -238,7 +246,11 @@ class MainForm extends Component
             DB::commit();
             session()->flash('success', 'Data Booking / Reservasi di-Buat !');
 
-            return redirect()->route('backend.booking.index');
+            if ($this->mode == 'frontend') {
+                return redirect()->route('data-booking');
+            } else {
+                return redirect()->route('backend.booking.index');
+            }
         } catch (\Exception $e) {
             DB::rollBack();
             dd($e);

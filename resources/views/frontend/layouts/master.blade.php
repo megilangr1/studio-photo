@@ -22,10 +22,38 @@
     <link href="{{ asset('frontend') }}/vendor/boxicons/css/boxicons.min.css" rel="stylesheet">
     <link href="{{ asset('frontend') }}/vendor/glightbox/css/glightbox.min.css" rel="stylesheet">
     <link href="{{ asset('frontend') }}/vendor/swiper/swiper-bundle.min.css" rel="stylesheet">
+    
+    <!-- Select2 -->
+    <link rel="stylesheet" href="{{ asset('assets') }}/plugins/select2/css/select2.min.css">
+    <link rel="stylesheet" href="{{ asset('assets') }}/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css">
+
 
     <!-- Template Main CSS File -->
     <link href="{{ asset('frontend') }}/css/style.css" rel="stylesheet">
+    <style>
+      .select2-container--default .select2-selection--multiple .select2-selection__choice {
+        background-color: #2a2a2a !important;
+        border: 1px solid #aaa !important;
+        padding-left: 5px;
+        padding-right: 5px;
+      }
+      .select2-container .select2-selection--single {
+        height: 38px !important;
+      }
+      .select2-container--default .select2-selection--single .select2-selection__arrow {
+        height: 38px !important;
+      }
+  
+      .select2-container--default .select2-selection--single .select2-selection__rendered {
+        line-height: 36px !important;
+      }
+      
+    </style>
+    
 
+    @livewireStyles
+    @yield('css')
+    @stack('css')
     <!-- =======================================================
     * Template Name: Flexor - v4.7.0
     * Template URL: https://bootstrapmade.com/flexor-free-multipurpose-bootstrap-template/
@@ -70,11 +98,9 @@
           <ul>
             <li><a class="nav-link scrollto active" href="#hero"></a></li>
             <li><a class="nav-link scrollto " href="{{ route('frontend') }}#paket">Paket</a></li>
-            <li><a class="nav-link scrollto" href="#booking">Booking</a></li>
-            <li><a class="nav-link scrollto" href="#pricing">Pesanan</a></li>
-            <li><a class="nav-link scrollto" href="#pricing">Pembayaran</a></li>
-            <li><a class="nav-link scrollto" href="#pricing">Hasil Foto</a></li>
-            <li class="dropdown"><a href="#"><span>Keuangan</span> <i class="bi bi-chevron-down"></i></a>
+            <li><a class="nav-link scrollto" href="{{ route('booking') }}">Booking</a></li>
+            <li><a class="nav-link scrollto" href="{{ route('data-booking') }}">Data Reservasi</a></li>
+            {{-- <li class="dropdown"><a href="#"><span>Keuangan</span> <i class="bi bi-chevron-down"></i></a>
               <ul>
                 <li><a href="#">Kas Masuk</a></li>
                 <li class="dropdown"><a href="#"><span>Kas Keluar</span> <i class="bi bi-chevron-right"></i></a>
@@ -84,7 +110,7 @@
                 </li>
               </ul>
             </li>
-            <li><a class="nav-link scrollto" href="#contact">Properti</a></li>
+            <li><a class="nav-link scrollto" href="#contact">Properti</a></li> --}}
           </ul>
           <i class="bi bi-list mobile-nav-toggle"></i>
         </nav><!-- .navbar -->
@@ -124,6 +150,8 @@
 
     <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
 
+    <script src="{{ asset('assets') }}/plugins/jquery/jquery.min.js"></script>
+
     <!-- Vendor JS Files -->
     <script src="{{ asset('frontend') }}/vendor/aos/aos.js"></script>
     <script src="{{ asset('frontend') }}/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
@@ -131,9 +159,17 @@
     <script src="{{ asset('frontend') }}/vendor/isotope-layout/isotope.pkgd.min.js"></script>
     <script src="{{ asset('frontend') }}/vendor/swiper/swiper-bundle.min.js"></script>
     <script src="{{ asset('frontend') }}/vendor/php-email-form/validate.js"></script>
+    <!-- Select2 -->
+    <script src="{{ asset('assets') }}/plugins/select2/js/select2.full.min.js"></script>
+
 
     <!-- Template Main JS File -->
     <script src="{{ asset('frontend') }}/js/main.js"></script>
+
+    @livewireScripts
+
+    @yield('script')
+    @stack('script')
 
   </body>
 </html>

@@ -3,7 +3,7 @@
     <div class="col-md-4">
       <div class="form-group">
         <label for="nama_pemesan">Nama Pemesan : </label>
-        <input type="text" wire:model="pemesanan.nama_pemesan" name="nama_pemesan" id="nama_pemesan" class="form-control {{ $errors->has('pemesanan.nama_pemesan') ? 'is-invalid':'' }}" placeholder="Masukan Nama Pemesan..." required autofocus>
+        <input type="text" wire:model="pemesanan.nama_pemesan" name="nama_pemesan" id="nama_pemesan" class="form-control {{ $errors->has('pemesanan.nama_pemesan') ? 'is-invalid':'' }}" placeholder="Masukan Nama Pemesan..." {{ $mode == 'frontend' ? 'disabled':'' }} required autofocus>
         <div class="invalid-feedback">
           {{ $errors->first('pemesanan.nama_pemesan') }}
         </div>

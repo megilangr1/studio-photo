@@ -2,10 +2,13 @@
 
 namespace App\Http\Livewire\Booking;
 
+use App\Models\AddOnBooking;
 use App\Models\Booking;
+use App\Models\HasilFoto;
 use App\Models\Paket;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\File;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 
@@ -20,6 +23,7 @@ class DetailForm extends Component
 
     public $pemesanan = [];
     public $paket = [];
+    public $biayaLainnya = [];
 
     public $reservedJam = [];
 
@@ -33,9 +37,17 @@ class DetailForm extends Component
         'nominal_booking' => null,
         'rekening_transfer' => null,
         'nominal_dp' => null,
+        'tambah_foto' => null,
+        'harga_paket_tambah_foto' => null,
+        'harga_akhir_tambah_foto' => null,
+        'total_pembayaran' => null,
         'status_bayar' => null,
+        'status_booking' => null,
         'file_bukti_pembayaran' => null,
         'file_path' => null,
+
+        'file_bukti_pembayaran_now' => null,
+        'file_path_now' => null,
     ];
     public $defaultJam = [
         "10:00",
@@ -62,6 +74,11 @@ class DetailForm extends Component
         "20:30",
     ];
 
+    public $addOn = [];
+
+    public $upload_hasil_foto = null; 
+    public $hasilFoto = [];
+
     protected $listeners = [
         'setJam',
         'setPaket',
@@ -85,11 +102,26 @@ class DetailForm extends Component
             $this->pemesanan['nominal_booking'] = $booking['nominal_booking'];
             $this->pemesanan['rekening_transfer'] = $booking['rekening_transfer'];
             $this->pemesanan['nominal_dp'] = $booking['nominal_dp'];
+
+            $this->pemesanan['tambah_foto'] = $booking['tambah_foto'];
+            $this->pemesanan['harga_paket_tambah_foto'] = $booking['harga_paket_tambah_foto'];
+            $this->pemesanan['harga_akhir_tambah_foto'] = $booking['harga_akhir_tambah_foto'];
+            $this->pemesanan['total_pembayaran'] = $booking['total_pembayaran'];
             $this->pemesanan['status_bayar'] = $booking['status_bayar'];
-            $this->pemesanan['file_bukti_pembayaran'] = $booking['file_bukti_pembayaran'];
-            $this->pemesanan['file_path'] = $booking['file_path'];
+            $this->pemesanan['status_booking'] = $booking['status_booking'];
+            $this->pemesanan['file_bukti_pembayaran_now'] = $booking['file_bukti_pembayaran'];
+            $this->pemesanan['file_path_now'] = $booking['file_path'];
 
             array_push($this->jam, $booking['jam_mulai']);
+            if (isset($booking['add_on']) && $booking['add_on'] != null) {
+                foreach ($booking['add_on'] as $key => $value) {
+                    $this->addOn[$value['id_biaya_lainnya']] = true;
+                }
+            }
+
+            foreach ($booking['hasil_foto'] as $key => $value) {
+                $this->hasilFoto[$value['id']] = $value; 
+            }
         }
 
         $this->getPaket();
@@ -104,6 +136,28 @@ class DetailForm extends Component
 
             $this->getFreeTime($value);
         }
+
+        if ($key == 'tambah_foto') {
+            $this->pemesanan['harga_akhir_tambah_foto'] = (double) $value * (double) $this->pemesanan['harga_paket_tambah_foto'];
+        }
+
+        $this->updateTotal();
+    }
+
+    public function updateTotal()
+    {
+        $totalAddOn = 0;
+
+        foreach ($this->addOn as $key => $value) {
+            if ($value == true) {
+                if (isset($this->biayaLainnya[$key])) {
+                    $totalAddOn += (double) $this->biayaLainnya[$key]['nominal_biaya'];
+                }
+            }
+        }
+
+        $total = (double) $this->pemesanan['nominal_booking'] + (double) $this->pemesanan['nominal_dp'] + (double) $this->pemesanan['harga_akhir_tambah_foto'] + (double) $totalAddOn;
+        $this->pemesanan['total_pembayaran'] = $total;
     }
 
     public function getFreeTime($date)
@@ -194,15 +248,19 @@ class DetailForm extends Component
 
     public function setPaket($value)
     {
-        $getPaket = Paket::where('id', '=', $value)->first();
+        $getPaket = Paket::with('biaya_lainnya')->where('id', '=', $value)->first();
         if ($getPaket == null) {
             $this->getPaket();
             $this->emit('error', 'Paket Tidak Dapat di-Pilih !');
         } else {
             $this->paket = $getPaket->toArray();
-
+            $this->reset('biayaLainnya');
+            foreach ($getPaket->biaya_lainnya->toArray() as $key => $value) {
+                $this->biayaLainnya[$value['id']] = $value;
+            }
             $this->pemesanan['id_paket'] = $this->paket['id'];
             $this->pemesanan['nominal_booking'] = $this->paket['harga'] ?? 0;
+            $this->pemesanan['harga_paket_tambah_foto'] = $this->paket['harga_tambah_foto'] ?? 0;
 
             if ($this->pemesanan['jam_mulai'] != null) {
                 $jamSelesai = date("H:i", strtotime($this->pemesanan['jam_mulai'] . "+" . $this->paket['durasi'] . " minutes"));
@@ -222,28 +280,52 @@ class DetailForm extends Component
             'pemesanan.jumlah_orang' => 'required|numeric',
             'pemesanan.nominal_booking' => 'required|numeric',
             'pemesanan.rekening_transfer' => 'nullable|string',
-            'pemesanan.nominal_dp' => 'nullable|string',
-            'pemesanan.status_bayar' => 'nullable|string',
+            'pemesanan.nominal_dp' => 'nullable|numeric',
+            'pemesanan.status_bayar' => 'nullable|numeric',
             'pemesanan.file_bukti_pembayaran' => 'nullable|image',
             'pemesanan.file_path' => 'nullable|string',
         ]);
-
         DB::beginTransaction();
 
-        dd($this->pemesanan);
-
         try {
+            $booking = Booking::where('id', '=', $this->booking['id'])->first();
+
             $adminId = null;
-            $userId = null;
+            $userId = $booking->user_id;
             
             if ($this->mode == 'backend') {
                 $adminId = Auth::user()->id;
-            } else {
-                $userId = Auth::user()->id;
             }
 
-            $booking = Booking::create([
-                'kode_booking' => "ASF-".time() . rand(100, 999),
+            $storage_disk_file = 'images';
+            // File Pembayaran
+            $uploadBuktiBayar = 0;
+            $file_bukti_pembayaran = $booking->file_bukti_pembayaran;
+            $storage_path_file_paket = $booking->file_path;
+            if ($this->pemesanan['file_bukti_pembayaran'] != null) {
+                $nama_file = $booking->kode_booking;
+
+                $file_bukti_pembayaran = $nama_file . '-'. time() . '.' . $this->pemesanan['file_bukti_pembayaran']->getClientOriginalExtension();
+                $storage_path_file_paket = $storage_disk_file .'/' . $file_bukti_pembayaran;
+                $uploadBuktiBayar = 1;
+            }
+
+            $addOnBooking = [];
+            foreach ($this->addOn as $key => $value) {
+                if ($value == true) {
+                    $addOnData = [
+                        'id_booking' => $booking->id,
+                        'id_paket' => $this->biayaLainnya[$key]['paket_id'],
+                        'id_biaya_lainnya' => $this->biayaLainnya[$key]['id'],
+                        'nama_biaya' => $this->biayaLainnya[$key]['nama_biaya'],
+                        'nominal_biaya' => $this->biayaLainnya[$key]['nominal_biaya'],
+                    ];
+
+                    array_push($addOnBooking, $addOnData);
+                }
+            }
+
+            $updateBooking = $booking->update([
                 'admin_id' => $adminId,
                 'user_id' => $userId,
                 'nama_pemesan' => $this->pemesanan['nama_pemesan'],
@@ -254,16 +336,24 @@ class DetailForm extends Component
                 'jam_selesai' => $this->pemesanan['jam_selesai'],
                 'jumlah_orang' => $this->pemesanan['jumlah_orang'],
                 'nominal_booking' => $this->pemesanan['nominal_booking'],
-                'rekening_transfer' => null,
-                'nominal_dp' => null,
-                'status_bayar' => 0,
-                'status_booking' => 0,
-                'file_bukti_pembayaran' => null,
-                'file_path' => null,
+                'rekening_transfer' => $this->pemesanan['rekening_transfer'],
+                'nominal_dp' => $this->pemesanan['nominal_dp'],
+                "harga_paket_tambah_foto" => $this->pemesanan['harga_paket_tambah_foto'],
+                "harga_akhir_tambah_foto" => $this->pemesanan['harga_akhir_tambah_foto'],
+                "total_pembayaran" => $this->pemesanan['total_pembayaran'],
+                "status_bayar" => $this->pemesanan['status_bayar'],
+                "status_booking" => $this->pemesanan['status_booking'],
+                'file_bukti_pembayaran' => $file_bukti_pembayaran ?? null,
+                'file_path' => $storage_path_file_paket ?? null,
             ]);
 
+            $deleteAddOn = $booking->addOn()->delete();
+            $biayaLainnya = AddOnBooking::insert($addOnBooking); 
+
+            if ($uploadBuktiBayar) { $uploadBuktiBayar = $this->pemesanan['file_bukti_pembayaran']->storeAs('/', $file_bukti_pembayaran, $storage_disk_file); }
+
             DB::commit();
-            session()->flash('success', 'Data Booking / Reservasi di-Buat !');
+            session()->flash('info', 'Data Booking / Reservasi di-Ubah !');
 
             return redirect()->route('backend.booking.index');
         } catch (\Exception $e) {
@@ -287,8 +377,77 @@ class DetailForm extends Component
         }
     }
 
+    public function tambahBiaya($id)
+    {
+        $this->addOn[$id] = true;
+        $this->updateTotal();
+    }
+
+    public function batalkanBiaya($id)
+    {
+        if (isset($this->addOn[$id])) {
+            $this->addOn[$id] = false;
+            $this->updateTotal();
+        }
+    }
+
+    public function uploadHasil()
+    {
+        $this->validate([
+            'upload_hasil_foto' => 'required|mimes:jpg,jpeg,png'
+        ]);
+
+        DB::beginTransaction();
+
+        try {
+            $storage_disk_file = 'images';
+            $nama_file = $this->booking['kode_booking'];
+            $file_bukti_pembayaran = $nama_file . '-'. rand(100, 999) . '.' . $this->upload_hasil_foto->getClientOriginalExtension();
+            $storage_path_file_paket = $storage_disk_file .'/'. $file_bukti_pembayaran;
+
+            $hasilFoto = HasilFoto::create([
+                'id_booking' => $this->booking['id'],
+                'nama_file' => $nama_file,
+                'file_path' => $storage_path_file_paket,
+            ]);
+
+            $uploadHasil = $this->upload_hasil_foto->storeAs('/', $file_bukti_pembayaran, $storage_disk_file);
+            $this->reset('upload_hasil_foto');
+            $this->refreshFoto();
+
+            DB::commit();
+            $this->emit('success', 'File di-Upload !');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            $this->emit('error', 'Terjadi Kesalahan !');
+        }
+    }
+
+    public function refreshFoto()
+    {
+        $this->reset('hasilFoto');
+        $getFoto = HasilFoto::where('id_booking', '=', $this->booking['id'])->get()->toArray();
+        foreach ($getFoto as $key => $value) {
+            $this->hasilFoto[$value['id']] = $value; 
+        }
+    }
+
+    public function deleteFoto($id)
+    {
+        $foto = HasilFoto::where('id_booking', '=', $this->booking['id'])->where('id', '=', $id)->first();
+        if ($foto != null) {
+            $checkExists = File::exists(public_path($foto->file_path));
+            $deleteFoto = $foto->delete();
+            if ($checkExists) {
+                $delete = File::delete(public_path($foto->file_path));
+            }
+        }
+
+        $this->refreshFoto();
+    }
+
     public function dummy()
     {
-        dd($this->pemesanan);
+        $this->upload_hasil_foto = null;
     }
 }

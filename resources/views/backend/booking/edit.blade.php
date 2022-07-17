@@ -7,12 +7,12 @@
       <div class="card-header">
         <h5 class="card-title"> <span class="fa fa-boxes text-primary"></span> &ensp; Detail Data Booking / Reservasi Pemotretan</h5>
         <div class="card-tools">
-          <a href="{{ route('backend.paket.index') }}" class="btn btn-xs btn-danger px-2">
+          <a href="{{ route('backend.booking.index') }}" class="btn btn-xs btn-danger px-2">
             <span class="fa fa-arrow-left"></span> &ensp; Kembali
           </a>
         </div>
       </div>
-      <div class="card-body">
+      <div class="card-body p-0">
         {{-- <form action="{{ route('backend.booking.store') }}" method="post">
           @csrf 
         </form> --}}

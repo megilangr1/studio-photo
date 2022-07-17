@@ -29,8 +29,12 @@ class CreateBookingsTable extends Migration
             $table->double('nominal_booking');
             $table->string('rekening_transfer')->nullable();
             $table->double('nominal_dp')->nullable();
-            $table->double('status_bayar')->default(0);
-            $table->double('status_booking')->default(0);
+            $table->double('tambah_foto')->default(0);
+            $table->double('harga_paket_tambah_foto')->default(0);
+            $table->double('harga_akhir_tambah_foto')->default(0);
+            $table->double('total_pembayaran');
+            $table->tinyInteger('status_bayar')->default(0);
+            $table->tinyInteger('status_booking')->default(0);
             $table->string('file_bukti_pembayaran')->nullable();
             $table->string('file_path')->nullable();
             $table->timestamps();

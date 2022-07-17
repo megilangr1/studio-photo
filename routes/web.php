@@ -33,6 +33,14 @@ Route::post('register', [AuthController::class, 'registration'])->name('registra
 
 Route::post('/logout',[AuthController::class, 'logout'])->name('logout');
 
+Route::middleware(['auth'])->group(function () {
+    Route::get('/booking', [MainController::class, 'booking'])->name('booking');
+    Route::put('/booking/{id}/cancel', [MainController::class, 'cancelBooking'])->name('booking-cancel');
+    Route::post('/upload-pembayaran', [MainController::class, 'uploadPembayaran'])->name('upload-pembayaran');
+
+    Route::get('/data-booking', [MainController::class, 'dataBooking'])->name('data-booking');
+});
+
 
 Route::prefix('backend')->middleware(['auth', 'role:Owner', 'role:Administrator'])->name('backend.')->group(function () {
     Route::get('/', [BackendController::class, 'main'])->name('main');
@@ -53,4 +61,8 @@ Route::prefix('backend')->middleware(['auth', 'role:Owner', 'role:Administrator'
     });
 
     Route::resource('booking', BookingController::class);
+    Route::put('booking/{booking}/confirm', [BookingController::class, 'confirm'])->name('booking.confirm');
+    Route::put('booking/{booking}/reject', [BookingController::class, 'reject'])->name('booking.reject');
+    Route::post('booking/{booking}/uploadFoto', [BookingController::class, 'uploadFoto'])->name('booking.uploadFoto');
+
 });
