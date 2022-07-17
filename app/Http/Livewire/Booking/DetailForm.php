@@ -4,14 +4,17 @@ namespace App\Http\Livewire\Booking;
 
 use App\Models\Booking;
 use App\Models\Paket;
-use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Livewire\Component;
+use Livewire\WithFileUploads;
 
-class MainForm extends Component
+class DetailForm extends Component
 {
+    use WithFileUploads;
+
     public $mode = 'backend';
+    public $booking = [];
     public $jam = [];
     public $dataPaket = [];
 
@@ -62,12 +65,33 @@ class MainForm extends Component
     protected $listeners = [
         'setJam',
         'setPaket',
+        'setVal',
     ];
 
-    public function mount($mode = "")
+    public function mount($mode = "", $booking = [])
     {
         $this->mode = $mode;
         $this->pemesanan = $this->params;
+
+        if ($booking != null) {
+            $this->booking = $booking;
+
+            $this->pemesanan['nama_pemesan'] = $booking['nama_pemesan'];
+            $this->pemesanan['tanggal_booking'] = $booking['tanggal_booking'];
+            $this->pemesanan['jam_mulai'] = $booking['jam_mulai'];
+            $this->pemesanan['jam_selesai'] = $booking['jam_selesai'];
+            $this->pemesanan['id_paket'] = $booking['id_paket'];
+            $this->pemesanan['jumlah_orang'] = $booking['jumlah_orang'];
+            $this->pemesanan['nominal_booking'] = $booking['nominal_booking'];
+            $this->pemesanan['rekening_transfer'] = $booking['rekening_transfer'];
+            $this->pemesanan['nominal_dp'] = $booking['nominal_dp'];
+            $this->pemesanan['status_bayar'] = $booking['status_bayar'];
+            $this->pemesanan['file_bukti_pembayaran'] = $booking['file_bukti_pembayaran'];
+            $this->pemesanan['file_path'] = $booking['file_path'];
+
+            array_push($this->jam, $booking['jam_mulai']);
+        }
+
         $this->getPaket();
     }
 
@@ -144,10 +168,11 @@ class MainForm extends Component
         $dataPaket = Paket::get()->toArray();
         $this->dataPaket = $dataPaket;
     }
+    
 
     public function render()
     {
-        return view('livewire.booking.main-form');
+        return view('livewire.booking.detail-form');
     }
 
     public function setJam($value)
@@ -194,16 +219,18 @@ class MainForm extends Component
             'pemesanan.jam_mulai' => 'required|string',
             'pemesanan.jam_selesai' => 'required|string',
             'pemesanan.id_paket' => 'required|numeric|exists:pakets,id',
-            'pemesanan.jumlah_orang' => 'required|string',
+            'pemesanan.jumlah_orang' => 'required|numeric',
             'pemesanan.nominal_booking' => 'required|numeric',
             'pemesanan.rekening_transfer' => 'nullable|string',
             'pemesanan.nominal_dp' => 'nullable|string',
             'pemesanan.status_bayar' => 'nullable|string',
-            'pemesanan.file_bukti_pembayaran' => 'nullable|string',
+            'pemesanan.file_bukti_pembayaran' => 'nullable|image',
             'pemesanan.file_path' => 'nullable|string',
         ]);
 
         DB::beginTransaction();
+
+        dd($this->pemesanan);
 
         try {
             $adminId = null;
@@ -247,6 +274,19 @@ class MainForm extends Component
         dd($this->pemesanan);
     }
     
+    public function setVal()
+    {
+        $this->emit('setJamVal', $this->booking['jam_mulai']);
+        $this->emit('setPaketVal', $this->booking['id_paket']);
+    }
+    
+    public function resetFile()
+    {
+        if (isset($this->pemesanan['file_bukti_pembayaran'])) {
+            $this->pemesanan['file_bukti_pembayaran'] = null;
+        }
+    }
+
     public function dummy()
     {
         dd($this->pemesanan);

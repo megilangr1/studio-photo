@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Booking;
 use Illuminate\Http\Request;
 
 class BookingController extends Controller
@@ -13,7 +14,8 @@ class BookingController extends Controller
      */
     public function index()
     {
-        return view('backend.booking.index');
+        $bookings = Booking::orderBy('tanggal_booking', 'DESC')->paginate(25);
+        return view('backend.booking.index', compact('bookings'));
     }
 
     /**
@@ -54,9 +56,9 @@ class BookingController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit(Booking $booking)
     {
-        //
+        return view('backend.booking.edit', compact('booking'));
     }
 
     /**

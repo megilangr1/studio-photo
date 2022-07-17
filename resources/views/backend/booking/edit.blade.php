@@ -5,7 +5,7 @@
   <div class="col-12">
     <div class="card card-outline card-primary">
       <div class="card-header">
-        <h5 class="card-title"> <span class="fa fa-boxes text-primary"></span> &ensp; Buat Data Booking / Reservasi Pemotretan</h5>
+        <h5 class="card-title"> <span class="fa fa-boxes text-primary"></span> &ensp; Detail Data Booking / Reservasi Pemotretan</h5>
         <div class="card-tools">
           <a href="{{ route('backend.paket.index') }}" class="btn btn-xs btn-danger px-2">
             <span class="fa fa-arrow-left"></span> &ensp; Kembali
@@ -16,7 +16,7 @@
         {{-- <form action="{{ route('backend.booking.store') }}" method="post">
           @csrf 
         </form> --}}
-        @livewire('booking.main-form', ['mode' => 'backend'])
+        @livewire('booking.detail-form', ['mode' => 'backend', 'booking' => $booking->toArray()])
       </div>
     </div>
   </div>

@@ -115,7 +115,7 @@
 			</div>
 			<div class="col-md-4">
 				<div class="form-group"> 
-					<label for="file_paket">File Dokumen:</label>
+					<label for="file_paket">Photo Paket :</label>
 					<div class="float-right">
 						@if ($paket['file_paket'] != null)
 							<span class="badge badge-success mx-1" style="line-height: normal !important;" data-toggle="offcanvas" role="button" data-tooltip="tooltip" title="Klik Untuk Membatalkan File Upload" wire:click="resetFile('bap')">File di-Unggah</span>

@@ -16,24 +16,47 @@
         <div class="row">
           <div class="col-12">
             <div class="table-responsive">
-              {{-- <table class="table table-bordered m-0">
+              <table class="table table-bordered m-0">
                 <thead>
                   <tr>
                     <th class="text-center" width="5%">No.</th>
-                    <th>Nama Paket</th>
-                    <th>Harga</th>
+                    <th>Kode Transaksi</th>
+                    <th>Tanggal Booking</th>
+                    <th>Nama Pemesan</th>
+                    <th class="text-center">Status Pembayaran</th>
                     <th class="text-center" width="5%">Aksi</th>
                   </tr>
                 </thead>
                 <tbody>
-                  @forelse ($pakets as $item)
+                  @forelse ($bookings as $item)
                     <tr>
-                      <td class="align-middle text-center">{{ ($pakets->currentpage()-1) * $pakets->perpage() + $loop->index + 1 }}.</td>
-                      <td class="align-middle">{{ $item->nama_paket }}</td>
-                      <td class="align-middle">Rp. {{ number_format($item->harga, 0, ',', '.') }}</td>
+                      <td class="align-middle text-center">{{ ($bookings->currentpage()-1) * $bookings->perpage() + $loop->index + 1 }}.</td>
+                      <td class="align-middle">{{ $item->kode_booking }}</td>
+                      <td class="align-middle">{{ date('d/m/Y', strtotime($item->tanggal_booking)) }} | {{ $item->jam_mulai }}</td>
+                      <td class="align-middle">{{ $item->nama_pemesan }}</td>
+                      <td class="align-middle text-center">
+                        @switch($item->status_bayar)
+                            @case(0)
+                              <span class="btn btn-warning btn-sm">
+                                Belum di-Bayar
+                              </span>
+                              @break
+                            @case(1)
+                              <span class="btn btn-info btn-sm">
+                                DP
+                              </span>
+                                @break
+                            @case(2)
+                              <span class="btn btn-info btn-sm">
+                                Lunas
+                              </span>
+                            @default
+                                
+                        @endswitch
+                      </td>
                       <td class="align-middle text-center">
                         <div class="btn-group">
-                          <a href="{{ route('backend.paket.edit', $item->id) }}" class="btn btn-sm btn-warning borad">
+                          <a href="{{ route('backend.booking.edit', $item->id) }}" class="btn btn-sm btn-warning borad">
                             <span class="fa fa-edit"></span>
                           </a>
                           <form action="{{ route('backend.paket.destroy', $item->id) }}" method="post">
@@ -52,7 +75,7 @@
                     </tr>
                   @endforelse
                 </tbody>
-              </table> --}}
+              </table>
             </div>
           </div>
         </div>
@@ -61,7 +84,7 @@
         <div class="row">
           <div class="col-12">
             <div class="float-right">
-              {{-- {{ $pakets->links() }} --}}
+              {{ $bookings->links() }}
             </div>
           </div>
         </div>
