@@ -77,4 +77,14 @@ class MainController extends Controller
             return redirect()->back();
         }
     }
+
+    public function hasilBooking($kode)
+    {
+        $booking = Booking::with('hasilFoto')->where('user_id', '=', auth()->user()->id)->where('kode_booking', '=', $kode)->first();
+        if ($booking != null) {
+            return view('frontend.hasil-foto', compact('booking'));
+        } else {
+            return redirect(route('data-booking'));
+        }
+    }
 }

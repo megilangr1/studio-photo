@@ -39,6 +39,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/upload-pembayaran', [MainController::class, 'uploadPembayaran'])->name('upload-pembayaran');
 
     Route::get('/data-booking', [MainController::class, 'dataBooking'])->name('data-booking');
+    Route::get('/hasil-foto/{booking}', [MainController::class, 'hasilBooking'])->name('hasil-foto');
 });
 
 
