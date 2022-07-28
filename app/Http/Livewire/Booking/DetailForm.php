@@ -5,6 +5,7 @@ namespace App\Http\Livewire\Booking;
 use App\Models\AddOnBooking;
 use App\Models\Booking;
 use App\Models\HasilFoto;
+use App\Models\KasBesar;
 use App\Models\Paket;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -156,7 +157,7 @@ class DetailForm extends Component
             }
         }
 
-        $total = (double) $this->pemesanan['nominal_booking'] + (double) $this->pemesanan['nominal_dp'] + (double) $this->pemesanan['harga_akhir_tambah_foto'] + (double) $totalAddOn;
+        $total = (double) $this->pemesanan['nominal_booking'] + (double) $this->pemesanan['harga_akhir_tambah_foto'] + (double) $totalAddOn;
         $this->pemesanan['total_pembayaran'] = $total;
     }
 
@@ -289,7 +290,6 @@ class DetailForm extends Component
 
         try {
             $booking = Booking::where('id', '=', $this->booking['id'])->first();
-
             $adminId = null;
             $userId = $booking->user_id;
             
@@ -338,6 +338,7 @@ class DetailForm extends Component
                 'nominal_booking' => $this->pemesanan['nominal_booking'],
                 'rekening_transfer' => $this->pemesanan['rekening_transfer'],
                 'nominal_dp' => $this->pemesanan['nominal_dp'],
+                'tambah_foto' => $this->pemesanan['tambah_foto'],
                 "harga_paket_tambah_foto" => $this->pemesanan['harga_paket_tambah_foto'],
                 "harga_akhir_tambah_foto" => $this->pemesanan['harga_akhir_tambah_foto'],
                 "total_pembayaran" => $this->pemesanan['total_pembayaran'],
@@ -349,6 +350,33 @@ class DetailForm extends Component
 
             $deleteAddOn = $booking->addOn()->delete();
             $biayaLainnya = AddOnBooking::insert($addOnBooking); 
+            if ($booking->status_bayar == 2) {
+                $nominalKas = $booking->total_pembayaran;
+                $checkKasBooking = KasBesar::where('transaction_id', '=', $booking->id)->where('asal_uang', 'DP Booking')->first();
+                if ($checkKasBooking != null) {
+                    $nominalKas = $booking->total_pembayaran - $booking->nominal_dp;  
+                }
+
+                $createNew = 0;
+                $checkKasBooking = KasBesar::where('transaction_id', '=', $booking->id)->where('asal_uang', 'Pembayaran Lunas')->first();
+                if ($checkKasBooking != null) {
+                    if ($checkKasBooking->nominal != $nominalKas) {
+                        $deleteKas = $checkKasBooking->delete();
+                        $createNew = 1;
+                    }
+                }
+
+                if ($createNew) {
+                    $insertKas = KasBesar::create([
+                        'tanggal_data' => date('Y-m-d', strtotime($booking->tanggal_booking)),
+                        'transaction_id' => $booking->id,
+                        'jenis_data' => 1,
+                        'asal_uang' => 'Pembayaran Lunas',
+                        'nominal' => $nominalKas,
+                        'keterangan' => null,
+                    ]);
+                }
+            }
 
             if ($uploadBuktiBayar) { $uploadBuktiBayar = $this->pemesanan['file_bukti_pembayaran']->storeAs('/', $file_bukti_pembayaran, $storage_disk_file); }
 

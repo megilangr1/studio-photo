@@ -139,7 +139,7 @@
 									<div class="input-group-prepend">
 										<div class="input-group-text">Rp. </div>
 									</div>
-									<input type="text" wire:model="pemesanan.nominal_dp" name="nominal_dp" id="nominal_dp" class="form-control {{ $errors->has('pemesanan.nominal_dp') ? 'is-invalid':'' }}" placeholder="0..." required>
+									<input type="text" wire:model="pemesanan.nominal_dp" name="nominal_dp" id="nominal_dp" class="form-control {{ $errors->has('pemesanan.nominal_dp') ? 'is-invalid':'' }}" placeholder="0..." required {{ $pemesanan['status_bayar'] == 1 || $pemesanan['status_bayar'] == 2 ? 'disabled':'' }}>
 									<div class="invalid-feedback">
 										{{ $errors->first('pemesanan.nominal_dp') }}
 									</div>
@@ -311,13 +311,15 @@
 							</div>
 						</div>
 						<div class="col-md-5 bg-blue text-white">
-							<h6 class="text-right font-weight-bold p-2">Total Pembayaran : Rp. {{ number_format($pemesanan['total_pembayaran'], 0, ',', '.') }}</h5>
+							<h6 class="align-middle text-right font-weight-bold p-2">Total DP : Rp. {{ number_format($pemesanan['nominal_dp'], 0, ',', '.') }}</h5>
+							<h6 class="align-middle text-right font-weight-bold p-2">Total Pembayaran : Rp. {{ number_format($pemesanan['total_pembayaran'], 0, ',', '.') }}</h5>
+							<h6 class="align-middle text-right font-weight-bold p-2">Nominal Yang Harus di-Bayar : Rp. {{ number_format(($pemesanan['total_pembayaran'] - $pemesanan['nominal_dp']), 0, ',', '.') }}</h5>
 						</div>
 						<div class="col-md-12">
 							<hr>
 						</div>
 						<div class="col-md-5">
-							<button class="btn btn-outline-success btn-block" wire:click="tambahData">
+							<button class="btn btn-outline-success btn-block" wire:click="tambahData" wire:loading.attr="disabled">
 								<span class="fa fa-check"></span> &ensp; Update Data Booking / Reservasi
 							</button>
 						</div>

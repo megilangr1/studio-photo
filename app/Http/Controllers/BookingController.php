@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Booking;
+use App\Models\KasBesar;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class BookingController extends Controller
 {
@@ -101,6 +103,7 @@ class BookingController extends Controller
 
     public function confirm($id)
     {
+        DB::beginTransaction();
         try {
             $booking = Booking::where('id', '=', $id)->firstOrFail();
             $updateBooking = $booking->update([
@@ -108,9 +111,20 @@ class BookingController extends Controller
                 'status_booking' => 1
             ]);
 
+            $insertKas = KasBesar::create([
+                'tanggal_data' => date('Y-m-d'),
+                'transaction_id' => $booking->id,
+                'jenis_data' => 1,
+                'asal_uang' => 'DP Booking',
+                'nominal' => $booking->nominal_dp,
+                'keterangan' => null,
+            ]);
+
+            DB::commit();
             session()->flash('success', 'Status Booking / Reservasi di-Konfirmasi !');
             return redirect(route('backend.booking.index'));
         } catch (\Exception $e) {
+            DB::rollBack();
             dd($e);
         }
     }
