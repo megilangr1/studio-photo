@@ -79,6 +79,7 @@ Route::prefix('backend')->middleware(['auth', 'role:Owner', 'role:Administrator'
 
     Route::prefix('print-data')->name('print-data.')->group(function() {
         Route::post('/print-transaksi-booking', [PrintController::class, 'dataBooking'])->name('data-booking');
+        Route::post('/print-kas', [PrintController::class, 'dataKas'])->name('data-kas');
     });
 
 });

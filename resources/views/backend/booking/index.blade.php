@@ -188,13 +188,10 @@
                 <input type="date" name="date_end" class="form-control">
               </div>
             </div>
-            <div class="col-12">
-              <hr>
-            </div>
             <div class="col-md-4">
               <div class="form-group">
                 <button type="submit" class="btn btn-block btn-success">
-                  <span class="fa fa-search"></span> &ensp; Buat Print Data
+                  <span class="fa fa-print"></span> &ensp; Buat Print Data
                 </button>
               </div>
             </div>

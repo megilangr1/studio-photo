@@ -7,6 +7,10 @@
       <div class="card-header">
         <h5 class="card-title"> <span class="fa fa-box text-primary"></span> &ensp; Buku Kas</h5>
         <div class="card-tools">
+          <button type="button" class="btn btn-danger btn-xs mx-1" data-toggle="modal" data-target="#print-filter" data-backdrop="static" data-keyboard="false">
+            &ensp; <span class="fa fa-print"></span> &ensp;
+            Print Data
+          </button>
           <a href="{{ route('backend.kas.create') }}" class="btn btn-xs btn-primary px-2">
             <span class="fa fa-plus"></span> &ensp; Tambah Data
           </a>
@@ -74,6 +78,49 @@
             </div>
           </div>
         </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div class="modal fade" id="print-filter" wire:ignore>
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Print Data Transaksi Perolehan</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form action="{{ route('backend.print-data.data-kas') }}" target="_blank" method="post">
+          @csrf
+          <div class="row">
+            <div class="col-md-6 mb-2">
+              <div class="form-group">
+                <label>Tanggal Booking:</label>
+                <input type="date" name="date_start" class="form-control">
+              </div>
+            </div>
+            <div class="col-md-6 mb-2">
+              <div class="form-group">
+                <label>Hingga Tanggal :</label>
+                <input type="date" name="date_end" class="form-control">
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="form-group">
+                <button type="submit" class="btn btn-block btn-success">
+                  <span class="fa fa-print"></span> &ensp; Buat Print Data
+                </button>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer float-right">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Tutup Modal</button>
       </div>
     </div>
   </div>
