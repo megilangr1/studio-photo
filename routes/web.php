@@ -7,6 +7,7 @@ use App\Http\Controllers\KategoriController;
 use App\Http\Controllers\MainController;
 use App\Http\Controllers\PaketController;
 use App\Http\Controllers\PembelianPropertiController;
+use App\Http\Controllers\PencatatanKasController;
 use App\Http\Controllers\PropertiController;
 use App\Http\Controllers\StudioController;
 use App\Http\Controllers\UserController;
@@ -65,5 +66,14 @@ Route::prefix('backend')->middleware(['auth', 'role:Owner', 'role:Administrator'
     Route::put('booking/{booking}/confirm', [BookingController::class, 'confirm'])->name('booking.confirm');
     Route::put('booking/{booking}/reject', [BookingController::class, 'reject'])->name('booking.reject');
     Route::post('booking/{booking}/uploadFoto', [BookingController::class, 'uploadFoto'])->name('booking.uploadFoto');
+
+    Route::prefix('buku-kas')->name('kas.')->group(function() {
+        Route::get('/', [PencatatanKasController::class, 'index'])->name('index');
+        Route::get('/create', [PencatatanKasController::class, 'create'])->name('create');
+        Route::post('/', [PencatatanKasController::class, 'store'])->name('store');
+        Route::get('/{pembelian}/edit', [PencatatanKasController::class, 'edit'])->name('edit');
+        Route::put('/{pembelian}/update', [PencatatanKasController::class, 'update'])->name('update');
+        Route::delete('/{pembelian}/destroy', [PencatatanKasController::class, 'destroy'])->name('destroy');
+    });
 
 });

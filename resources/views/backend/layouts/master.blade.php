@@ -204,6 +204,12 @@
                     <p>Booking / Pemesanan</p>
                   </a>
                 </li>
+                <li class="nav-item">
+                  <a href="{{ route('backend.kas.index') }}" class="nav-link">
+                    <i class="far fa-circle nav-icon"></i>
+                    <p>Pencatatan Kas</p>
+                  </a>
+                </li>
               </ul>
             </li>
           </ul>
