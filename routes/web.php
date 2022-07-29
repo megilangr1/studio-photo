@@ -8,6 +8,7 @@ use App\Http\Controllers\MainController;
 use App\Http\Controllers\PaketController;
 use App\Http\Controllers\PembelianPropertiController;
 use App\Http\Controllers\PencatatanKasController;
+use App\Http\Controllers\PrintController;
 use App\Http\Controllers\PropertiController;
 use App\Http\Controllers\StudioController;
 use App\Http\Controllers\UserController;
@@ -74,6 +75,10 @@ Route::prefix('backend')->middleware(['auth', 'role:Owner', 'role:Administrator'
         Route::get('/{pembelian}/edit', [PencatatanKasController::class, 'edit'])->name('edit');
         Route::put('/{pembelian}/update', [PencatatanKasController::class, 'update'])->name('update');
         Route::delete('/{pembelian}/destroy', [PencatatanKasController::class, 'destroy'])->name('destroy');
+    });
+
+    Route::prefix('print-data')->name('print-data.')->group(function() {
+        Route::post('/print-transaksi-booking', [PrintController::class, 'dataBooking'])->name('data-booking');
     });
 
 });
