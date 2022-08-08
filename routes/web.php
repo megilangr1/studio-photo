@@ -46,17 +46,20 @@ Route::middleware(['auth'])->group(function () {
 });
 
 
-Route::prefix('backend')->middleware(['auth', 'role:Owner', 'role:Administrator'])->name('backend.')->group(function () {
+Route::prefix('backend')->middleware(['auth', 'role:Owner|Administrator'])->name('backend.')->group(function () {
     Route::get('/', [BackendController::class, 'main'])->name('main');
 
-    Route::resource('user', UserController::class);
-    Route::resource('pelanggan', PelangganController::class);
-    Route::resource('paket', PaketController::class);
-    Route::resource('studio', StudioController::class);
-    Route::resource('kategori', KategoriController::class);
-    Route::resource('properti', PropertiController::class);
+    Route::resource('user', UserController::class)->middleware('permission:Data Pengguna');
+    Route::get('/user/{user}/permission', [UserController::class, 'permission'])->name('user.permission')->middleware('role:Owner');
+    Route::put('/user/{user}/sync', [UserController::class, 'permissionSync'])->name('user.sync')->middleware('role:Owner');
 
-    Route::prefix('pembelian-properti')->name('pembelian.')->group(function() {
+    Route::resource('pelanggan', PelangganController::class)->middleware('permission:Data Pelanggan');
+    Route::resource('paket', PaketController::class)->middleware('permission:Data Paket');
+    Route::resource('studio', StudioController::class)->middleware('permission:Data Studio');
+    Route::resource('kategori', KategoriController::class)->middleware('permission:Data Kategori Properti');
+    Route::resource('properti', PropertiController::class)->middleware('permission:Data Properti');
+
+    Route::prefix('pembelian-properti')->middleware('permission:Transaksi Pembelian Properti')->name('pembelian.')->group(function() {
         Route::get('/', [PembelianPropertiController::class, 'index'])->name('index');
         Route::get('/create', [PembelianPropertiController::class, 'create'])->name('create');
         Route::post('/', [PembelianPropertiController::class, 'store'])->name('store');
@@ -65,12 +68,14 @@ Route::prefix('backend')->middleware(['auth', 'role:Owner', 'role:Administrator'
         Route::delete('/{pembelian}/destroy', [PembelianPropertiController::class, 'destroy'])->name('destroy');
     });
 
-    Route::resource('booking', BookingController::class);
-    Route::put('booking/{booking}/confirm', [BookingController::class, 'confirm'])->name('booking.confirm');
-    Route::put('booking/{booking}/reject', [BookingController::class, 'reject'])->name('booking.reject');
-    Route::post('booking/{booking}/uploadFoto', [BookingController::class, 'uploadFoto'])->name('booking.uploadFoto');
+    Route::middleware(['permission:Transaksi Booking'])->group(function () {
+        Route::resource('booking', BookingController::class);
+        Route::put('booking/{booking}/confirm', [BookingController::class, 'confirm'])->name('booking.confirm');
+        Route::put('booking/{booking}/reject', [BookingController::class, 'reject'])->name('booking.reject');
+        Route::post('booking/{booking}/uploadFoto', [BookingController::class, 'uploadFoto'])->name('booking.uploadFoto');
+    });
 
-    Route::prefix('buku-kas')->name('kas.')->group(function() {
+    Route::prefix('buku-kas')->middleware('permission:Transaksi Pencatatan Kas')->name('kas.')->group(function() {
         Route::get('/', [PencatatanKasController::class, 'index'])->name('index');
         Route::get('/create', [PencatatanKasController::class, 'create'])->name('create');
         Route::post('/', [PencatatanKasController::class, 'store'])->name('store');

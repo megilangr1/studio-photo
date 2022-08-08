@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
 
 class UserController extends Controller
 {
@@ -126,6 +128,35 @@ class UserController extends Controller
             $delete = $user->delete();
 
             session()->flash('warning', 'Data di-Hapus !');
+            return redirect(route('backend.user.index'));
+        } catch (\Exception $e) {
+            dd($e);
+        }
+    }
+
+    public function permission(User $user)
+    {
+        $roles = Role::get();
+        $permission = Permission::get();
+        if ($user->email == 'admin@mail.com' || $user->pelanggan != null) {
+            abort(404);
+        }
+        return view('backend.user.permission', compact('roles', 'permission', 'user'));
+    }
+    
+    public function permissionSync(Request $request, User $user)
+    {
+        $this->validate($request, [
+            'role' => 'required|array',
+            'role.*' => 'required|exists:roles,id',
+            'permission' => 'required|array',
+            'permission.*' => 'required|exists:permissions,id',
+        ]);
+
+        try {
+            $user->syncRoles($request->role);
+            $user->syncPermissions($request->permission);
+
             return redirect(route('backend.user.index'));
         } catch (\Exception $e) {
             dd($e);

@@ -43,6 +43,13 @@
                       </td>
                       <td class="align-middle text-center">
                         <div class="btn-group">
+                          @if ($item->email != 'admin@mail.com')
+                            @if (in_array('Owner', auth()->user()->roles()->pluck('name')->toArray()))
+                              <a href="{{ route('backend.user.permission', $item->id) }}" class="btn btn-sm btn-info borad">
+                                <span class="fa fa-key"></span>
+                              </a>
+                            @endif
+                          @endif
                           <a href="{{ route('backend.user.edit', $item->id) }}" class="btn btn-sm btn-warning borad">
                             <span class="fa fa-edit"></span>
                           </a>

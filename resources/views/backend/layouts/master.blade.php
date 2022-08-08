@@ -151,42 +151,54 @@
                 </p>
               </a>
               <ul class="nav nav-treeview">
-                <li class="nav-item">
-                  <a href="{{ route('backend.user.index') }}" class="nav-link">
-                    <i class="far fa-circle nav-icon"></i>
-                    <p>Data Pengguna</p>
-                  </a>
-                </li>
-                <li class="nav-item">
-                  <a href="{{ route('backend.pelanggan.index') }}" class="nav-link">
-                    <i class="far fa-circle nav-icon"></i>
-                    <p>Data Pelanggan</p>
-                  </a>
-                </li>
-                <li class="nav-item">
-                  <a href="{{ route('backend.paket.index') }}" class="nav-link">
-                    <i class="far fa-circle nav-icon"></i>
-                    <p>Daftar Paket</p>
-                  </a>
-                </li>
-                <li class="nav-item">
-                  <a href="{{ route('backend.studio.index') }}" class="nav-link">
-                    <i class="far fa-circle nav-icon"></i>
-                    <p>Daftar Studio</p>
-                  </a>
-                </li>
-                <li class="nav-item">
-                  <a href="{{ route('backend.kategori.index') }}" class="nav-link">
-                    <i class="far fa-circle nav-icon"></i>
-                    <p>Kategori Properti</p>
-                  </a>
-                </li>
-                <li class="nav-item">
-                  <a href="{{ route('backend.properti.index') }}" class="nav-link">
-                    <i class="far fa-circle nav-icon"></i>
-                    <p>Daftar Properti</p>
-                  </a>
-                </li>
+                @if (in_array("Data Pengguna", auth()->user()->permissions()->pluck('name')->toArray()))
+                  <li class="nav-item">
+                    <a href="{{ route('backend.user.index') }}" class="nav-link">
+                      <i class="far fa-circle nav-icon"></i>
+                      <p>Data Pengguna</p>
+                    </a>
+                  </li>
+                @endif
+                @if (in_array("Data Pelanggan", auth()->user()->permissions()->pluck('name')->toArray()))
+                  <li class="nav-item">
+                    <a href="{{ route('backend.pelanggan.index') }}" class="nav-link">
+                      <i class="far fa-circle nav-icon"></i>
+                      <p>Data Pelanggan</p>
+                    </a>
+                  </li>
+                @endif
+                @if (in_array("Data Paket", auth()->user()->permissions()->pluck('name')->toArray()))
+                  <li class="nav-item">
+                    <a href="{{ route('backend.paket.index') }}" class="nav-link">
+                      <i class="far fa-circle nav-icon"></i>
+                      <p>Daftar Paket</p>
+                    </a>
+                  </li>
+                @endif
+                @if (in_array("Data Studio", auth()->user()->permissions()->pluck('name')->toArray()))
+                  <li class="nav-item">
+                    <a href="{{ route('backend.studio.index') }}" class="nav-link">
+                      <i class="far fa-circle nav-icon"></i>
+                      <p>Daftar Studio</p>
+                    </a>
+                  </li>
+                @endif
+                @if (in_array("Data Kategori Properti", auth()->user()->permissions()->pluck('name')->toArray()))
+                  <li class="nav-item">
+                    <a href="{{ route('backend.kategori.index') }}" class="nav-link">
+                      <i class="far fa-circle nav-icon"></i>
+                      <p>Kategori Properti</p>
+                    </a>
+                  </li>
+                @endif
+                @if (in_array("Data Properti", auth()->user()->permissions()->pluck('name')->toArray()))
+                  <li class="nav-item">
+                    <a href="{{ route('backend.properti.index') }}" class="nav-link">
+                      <i class="far fa-circle nav-icon"></i>
+                      <p>Daftar Properti</p>
+                    </a>
+                  </li>
+                @endif
               </ul>
             </li>
             <li class="nav-item ">
@@ -198,24 +210,30 @@
                 </p>
               </a>
               <ul class="nav nav-treeview">
-                <li class="nav-item">
-                  <a href="{{ route('backend.pembelian.index') }}" class="nav-link">
-                    <i class="far fa-circle nav-icon"></i>
-                    <p>Pembelian Properti</p>
-                  </a>
-                </li>
-                <li class="nav-item">
-                  <a href="{{ route('backend.booking.index') }}" class="nav-link">
-                    <i class="far fa-circle nav-icon"></i>
-                    <p>Booking / Pemesanan</p>
-                  </a>
-                </li>
-                <li class="nav-item">
-                  <a href="{{ route('backend.kas.index') }}" class="nav-link">
-                    <i class="far fa-circle nav-icon"></i>
-                    <p>Pencatatan Kas</p>
-                  </a>
-                </li>
+                @if (in_array("Transaksi Pembelian Properti", auth()->user()->permissions()->pluck('name')->toArray()))
+                  <li class="nav-item">
+                    <a href="{{ route('backend.pembelian.index') }}" class="nav-link">
+                      <i class="far fa-circle nav-icon"></i>
+                      <p>Pembelian Properti</p>
+                    </a>
+                  </li>
+                @endif
+                @if (in_array("Transaksi Booking", auth()->user()->permissions()->pluck('name')->toArray()))
+                  <li class="nav-item">
+                    <a href="{{ route('backend.booking.index') }}" class="nav-link">
+                      <i class="far fa-circle nav-icon"></i>
+                      <p>Booking / Pemesanan</p>
+                    </a>
+                  </li>
+                @endif
+                @if (in_array("Transaksi Pencatatan Kas", auth()->user()->permissions()->pluck('name')->toArray()))
+                  <li class="nav-item">
+                    <a href="{{ route('backend.kas.index') }}" class="nav-link">
+                      <i class="far fa-circle nav-icon"></i>
+                      <p>Pencatatan Kas</p>
+                    </a>
+                  </li>
+                @endif
               </ul>
             </li>
           </ul>
