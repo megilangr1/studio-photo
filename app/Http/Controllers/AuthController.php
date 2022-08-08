@@ -83,6 +83,8 @@ class AuthController extends Controller
                 'nomor_hp' => $request->nomor_hp,
                 'alamat' => null,
             ]);
+
+            $createUser->assignRole(3);
             DB::commit();
 
             if (auth()->attempt(['email' => $request->email, 'password' => $request->password])) {

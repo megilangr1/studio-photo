@@ -5,9 +5,9 @@
   <div class="col-12">
     <div class="card card-outline card-primary">
       <div class="card-header">
-        <h5 class="card-title"> <span class="fa fa-users text-primary"></span> &ensp; Data Pengguna</h5>
+        <h5 class="card-title"> <span class="fa fa-pelanggan text-primary"></span> &ensp; Data Pelanggan</h5>
         <div class="card-tools">
-          <a href="{{ route('backend.user.create') }}" class="btn btn-xs btn-primary px-2">
+          <a href="{{ route('backend.pelanggan.create') }}" class="btn btn-xs btn-primary px-2">
             <span class="fa fa-plus"></span> &ensp; Tambah Data
           </a>
         </div>
@@ -20,38 +20,31 @@
                 <thead>
                   <tr>
                     <th class="text-center" width="5%">No.</th>
-                    <th>Nama Pengguna</th>
+                    <th>Nama Pelanggan</th>
                     <th>E-Mail</th>
-                    <th>Jenis User</th>
+                    <th>No. Hp</th>
                     <th class="text-center" width="5%">Aksi</th>
                   </tr>
                 </thead>
                 <tbody>
-                  @forelse ($users as $item)
+                  @forelse ($pelanggan as $item)
                     <tr>
-                      <td class="align-middle text-center">{{ ($users->currentpage()-1) * $users->perpage() + $loop->index + 1 }}.</td>
-                      <td class="align-middle">{{ $item->name }}</td>
-                      <td class="align-middle">{{ $item->email }}</td>
-                      <td class="align-middle">
-                        <ul class="m-0">
-                          @foreach ($item->roles()->pluck('name') as $roles)
-                            <li>
-                              {{ $roles }}
-                            </li>
-                          @endforeach
-                        </ul>
+                      <td class="align-middle text-center">{{ ($pelanggan->currentpage()-1) * $pelanggan->perpage() + $loop->index + 1 }}.</td>
+                      <td class="align-middle">{{ $item->nama_lengkap }}</td>
+                      <td class="align-middle">{{ $item->user->email }}</td>
+                      <td class="align-middle">{{ $item->nomor_hp }}</td>
                       </td>
                       <td class="align-middle text-center">
                         <div class="btn-group">
-                          <a href="{{ route('backend.user.edit', $item->id) }}" class="btn btn-sm btn-warning borad">
+                          <a href="{{ route('backend.pelanggan.edit', $item->id) }}" class="btn btn-sm btn-warning borad">
                             <span class="fa fa-edit"></span>
                           </a>
                           @if (auth()->user()->id != $item->id)
-                          <form action="{{ route('backend.user.destroy', $item->id) }}" method="post">
+                          <form action="{{ route('backend.pelanggan.destroy', $item->id) }}" method="post">
                             @csrf
                             @method('DELETE')
-                            <button type="submit" class="btn btn-sm btn-danger borad">
-                              <span class="fa fa-trash"></span>
+                            <button type="submit" class="btn btn-sm {{ $item->deleted_at != null ? 'btn-info':'btn-danger' }} borad">
+                              <span class="fa {{ $item->deleted_at != null ? 'fa-undo':'fa-trash' }}"></span>
                             </button>
                           </form>
                           @endif
@@ -73,7 +66,7 @@
         <div class="row">
           <div class="col-12">
             <div class="float-right">
-              {{ $users->links() }}
+              {{ $pelanggan->links() }}
             </div>
           </div>
         </div>

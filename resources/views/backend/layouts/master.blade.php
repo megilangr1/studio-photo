@@ -158,6 +158,12 @@
                   </a>
                 </li>
                 <li class="nav-item">
+                  <a href="{{ route('backend.pelanggan.index') }}" class="nav-link">
+                    <i class="far fa-circle nav-icon"></i>
+                    <p>Data Pelanggan</p>
+                  </a>
+                </li>
+                <li class="nav-item">
                   <a href="{{ route('backend.paket.index') }}" class="nav-link">
                     <i class="far fa-circle nav-icon"></i>
                     <p>Daftar Paket</p>

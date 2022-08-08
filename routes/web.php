@@ -6,6 +6,7 @@ use App\Http\Controllers\BookingController;
 use App\Http\Controllers\KategoriController;
 use App\Http\Controllers\MainController;
 use App\Http\Controllers\PaketController;
+use App\Http\Controllers\PelangganController;
 use App\Http\Controllers\PembelianPropertiController;
 use App\Http\Controllers\PencatatanKasController;
 use App\Http\Controllers\PrintController;
@@ -49,6 +50,7 @@ Route::prefix('backend')->middleware(['auth', 'role:Owner', 'role:Administrator'
     Route::get('/', [BackendController::class, 'main'])->name('main');
 
     Route::resource('user', UserController::class);
+    Route::resource('pelanggan', PelangganController::class);
     Route::resource('paket', PaketController::class);
     Route::resource('studio', StudioController::class);
     Route::resource('kategori', KategoriController::class);
