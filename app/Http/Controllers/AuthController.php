@@ -31,7 +31,14 @@ class AuthController extends Controller
 
         $credentials = $request->except(['_token']);
 
-        $user = User::where('email',$request->email)->first();
+        $user = User::with('pelanggan')->where('email',$request->email)->first();
+        if ($user->pelanggan != null) {
+            if ($user->pelanggan->deleted_at != null) {
+                session()->flash('error-login', 'Invalid credentials');
+                return redirect()->back();
+            }
+        }
+
         if (auth()->attempt($credentials)) {
             $checkRoles = $user->getRoleNames()->toArray();
             if (in_array('Owner', $checkRoles) || in_array('Administrator', $checkRoles)) {

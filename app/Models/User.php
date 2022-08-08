@@ -43,4 +43,9 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public function pelanggan()
+    {
+        return $this->hasOne('App\Models\Pelanggan', 'user_id', 'id')->withTrashed();
+    }
 }
