@@ -9,6 +9,7 @@ class DataProperti extends Component
 {
     public $dataProperti = [];
     public $kategori = [];
+    public $total = 0;
 
     public $param = [
         'nama_properti' => null,
@@ -17,6 +18,11 @@ class DataProperti extends Component
         'harga' => 0,
         'keterangan' => null,
     ];
+
+    public function updatedDataProperti($value, $key)
+    {
+        $this->sumTotal();
+    }
 
     public function mount($old = [], $pembelian = [])
     {
@@ -43,7 +49,17 @@ class DataProperti extends Component
                 }
             }
         }
+        $this->sumTotal();
+    }
 
+    public function sumTotal()
+    {
+        $total = 0;
+        foreach ($this->dataProperti as $key => $value) {
+            $total = (double) $total + ( (double) $value['jumlah'] * (double) $value['harga'] ); 
+        }
+
+        $this->total = $total;
     }
 
     public function getKategori()

@@ -56,6 +56,14 @@
               </div>
             </div>
             <div class="col-12">
+              <div class="form-group">
+                <div class="custom-control custom-checkbox">
+                  <input class="custom-control-input" type="checkbox" name="pakai_kas" id="pakai_kas" value="1" {{ $pembelian->kas != null ? 'checked':'' }}>
+                  <label for="pakai_kas" class="custom-control-label">Dicatat Sebagai Pengeluaran Kas (Kas Saat Ini : Rp. {{ number_format($total, 0, ',' ,'.') }})</label>
+                </div>
+              </div>
+            </div>
+            <div class="col-12">
               @livewire('pembelian-properti.data-properti', ['old' => old(), 'pembelian' => $pembelian->detail->toArray()])
             </div>
             <div class="col-md-4">

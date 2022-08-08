@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Helper\MainHelper;
+use App\Models\KasBesar;
 use App\Models\PembelianProperti;
 use App\Models\PembelianPropertiDetail;
 use App\Models\PropertiFoto;
@@ -15,14 +16,15 @@ class PembelianPropertiController extends Controller
 {
     public function index()
     {
-        $pembelian = PembelianProperti::paginate(5);
+        $pembelian = PembelianProperti::with('kas')->paginate(5);
         return view('backend.pembelian.index', compact('pembelian'));
     }
 
     public function create()
     {
         $studio = Studio::orderBy('nama_studio')->get();
-        return view('backend.pembelian.create', compact('studio'));
+        $total = KasBesar::select('nominal')->get()->sum('nominal');
+        return view('backend.pembelian.create', compact('studio', 'total'));
     }
 
     public function store(Request $request)
@@ -35,7 +37,21 @@ class PembelianPropertiController extends Controller
             'kategori_id' => 'required|array',
             'jumlah' => 'required|array',
             'harga' => 'required|array',
+            'pakai_kas' => 'nullable|boolean'
         ]);
+
+        $total = 0;
+        if (isset($request->pakai_kas) && $request->pakai_kas == 1) {
+            $kas = KasBesar::select('nominal')->get()->sum('nominal');
+            foreach ($request->jumlah as $key => $value) {
+                $total = (double) $total + ( (double) $request->jumlah[$key] * (double) $request->harga[$key] ); 
+            }
+    
+            if ($kas < $total) {
+                session()->flash('error', 'Nominal Pembelian Lebih Besar Dari Sisa Kas Saat Ini !');
+                return redirect()->back()->withInput($request->all());
+            }
+        }
 
         DB::beginTransaction();
         try {
@@ -68,6 +84,8 @@ class PembelianPropertiController extends Controller
                 'keterangan' => $request->keterangan
             ]);
 
+            $idPembelian = $createPembelian->id;
+
             foreach ($detail as $key => $value) {
                 $detail[$key]['pembelian_properti_id'] = $createPembelian->id;
             }
@@ -92,13 +110,23 @@ class PembelianPropertiController extends Controller
             }
             $createPropertiFoto = PropertiFoto::insert($propertiFoto);
 
+            if (isset($request->pakai_kas) && $request->pakai_kas == 1) {
+                $insertKas = KasBesar::create([
+                    'tanggal_data' => date('Y-m-d'),
+                    'transaction_id' => $idPembelian,
+                    'jenis_data' => 2,
+                    'asal_uang' => 'Pembelian Properti',
+                    'nominal' => -1 * $total,
+                    'keterangan' => null,
+                ]);
+            }
+
             DB::commit();
             session()->flash('success', 'Data Pembelian Properti di-Buat !');
 
             return redirect(route('backend.pembelian.index'));
         } catch (\Exception $e) {
             DB::rollBack();
-            dd($e);
             session()->flash('error', 'Terjadi Kesalahan ! <br> Silahkan Hubungi Administrator !');
             return redirect()->back()->withInput($request->all());
         }
@@ -107,10 +135,16 @@ class PembelianPropertiController extends Controller
     public function edit($id)
     {
         try {
-            $pembelian = PembelianProperti::where('id', '=', $id)->firstOrFail();
+            $pembelian = PembelianProperti::with('kas')->where('id', '=', $id)->firstOrFail();
             $studio = Studio::orderBy('nama_studio')->get();
 
-            return view('backend.pembelian.edit', compact('pembelian', 'studio'));
+            if ($pembelian->kas != null) {
+                $total = KasBesar::select('nominal')->where('id', '!=', $pembelian->kas->id)->get()->sum('nominal');
+            } else {
+                $total = KasBesar::select('nominal')->get()->sum('nominal');
+            }
+
+            return view('backend.pembelian.edit', compact('pembelian', 'studio', 'total'));
         } catch (\Exception $e) {
             session()->flash('error', 'Terjadi Kesalahan !');
             return redirect(route('backend.pembelian.index'));
@@ -127,12 +161,30 @@ class PembelianPropertiController extends Controller
             'kategori_id' => 'required|array',
             'jumlah' => 'required|array',
             'harga' => 'required|array',
+            'pakai_kas' => 'nullable|boolean'
         ]);
 
         DB::beginTransaction();
         try {
-            $pembelian = PembelianProperti::where('id', '=', $id)->firstOrFail();
+            $pembelian = PembelianProperti::with('kas')->where('id', '=', $id)->firstOrFail();
             $detailPembelian = $pembelian->detail;
+
+            $total = 0;
+            if ($pembelian->kas != null) {
+                $kas = KasBesar::select('nominal')->where('id', '!=', $pembelian->kas->id)->get()->sum('nominal');
+            } else {
+                $kas = KasBesar::select('nominal')->get()->sum('nominal');
+            }
+
+            if (isset($request->pakai_kas) && $request->pakai_kas == 1) {
+                foreach ($request->jumlah as $key => $value) {
+                    $total = (double) $total + ( (double) $request->jumlah[$key] * (double) $request->harga[$key] ); 
+                }
+                if ($kas < $total) {
+                    session()->flash('error', 'Nominal Pembelian Lebih Besar Dari Sisa Kas Saat Ini !');
+                    return redirect()->back()->withInput($request->all());
+                }
+            }
 
             $helper = new MainHelper;
             $detail = [];
@@ -187,6 +239,27 @@ class PembelianPropertiController extends Controller
                 }
             }
             $createPropertiFoto = PropertiFoto::insert($propertiFoto);
+
+            if ($pembelian->kas != null) {
+                if (isset($request->pakai_kas) && $request->pakai_kas == 1) {
+                    $updateKas = $pembelian->kas()->update([
+                        'nominal' => -1 * $total
+                    ]);
+                } else {
+                    $deleteKas = $pembelian->kas()->delete();
+                }
+            } else {
+                if (isset($request->pakai_kas) && $request->pakai_kas == 1) {
+                    $insertKas = KasBesar::create([
+                        'tanggal_data' => date('Y-m-d'),
+                        'transaction_id' => $pembelian->id,
+                        'jenis_data' => 2,
+                        'asal_uang' => 'Pembelian Properti',
+                        'nominal' => -1 * $total,
+                        'keterangan' => null,
+                    ]);
+                }
+            }
 
             DB::commit();
             session()->flash('success', 'Data Pembelian Properti di-Ubah !');

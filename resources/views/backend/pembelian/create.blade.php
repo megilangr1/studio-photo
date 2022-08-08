@@ -55,6 +55,14 @@
               </div>
             </div>
             <div class="col-12">
+              <div class="form-group">
+                <div class="custom-control custom-checkbox">
+                  <input class="custom-control-input" type="checkbox" name="pakai_kas" id="pakai_kas" value="1" {{ old('pakai_kas') == '1' ? 'checked':'' }}>
+                  <label for="pakai_kas" class="custom-control-label">Tambahkan Sebagai Catatan Kas Pengeluaran (Kas Saat Ini : Rp. {{ number_format($total, 0, ',' ,'.') }})</label>
+                </div>
+              </div>
+            </div>
+            <div class="col-12">
               @livewire('pembelian-properti.data-properti', ['old' => old()])
             </div>
             <div class="col-md-4">

@@ -15,4 +15,9 @@ class PembelianProperti extends Model
     {
         return $this->hasMany('App\Models\PembelianPropertiDetail', 'pembelian_properti_id', 'id')->with('properti');
     }
+
+    public function kas()
+    {
+        return $this->hasOne('App\Models\KasBesar', 'transaction_id', 'id');
+    }
 }

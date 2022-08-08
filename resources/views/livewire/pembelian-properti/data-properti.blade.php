@@ -26,7 +26,7 @@
             </tr>
           </thead>
           <tbody>
-            @forelse ($dataProperti as $key => $item)
+            @forelse ($dataProperti as $key => $value)
               <tr>
                 <td class="align-middle text-center">{{ $loop->iteration }}.</td>
                 <td>
@@ -34,8 +34,8 @@
                 </td>
                 <td>
                   <select wire:model="dataProperti.{{ $key }}.kategori_id" name="kategori_id[]" id="kategori_id_{{ $key }}" class="form-control {{ $errors->has('kategori_id') ? 'is-invalid':''}}" style="width: 100%;">
-                    @foreach ($kategori as $item)
-                      <option value="{{ $item->id }}">{{ $item->nama_kategori }}</option>
+                    @foreach ($kategori as $kat)
+                      <option value="{{ $kat->id }}">{{ $kat->nama_kategori }}</option>
                     @endforeach
                   </select>
                 </td>
@@ -61,6 +61,11 @@
                 </td>
               </tr>
             @endforelse
+            <tr>
+              <td colspan="4" class="text-right">Total : </td>
+              <td>Rp. {{ number_format($total, 0, ',', '.') }}</td>
+              <td colspan="2">&ensp;</td>
+            </tr>
           </tbody>
         </table>
       </div>

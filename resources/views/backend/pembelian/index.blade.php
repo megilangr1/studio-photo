@@ -24,6 +24,7 @@
                     <th>Nomor Kwitansi</th>
                     <th>Jumlah Barang</th>
                     <th>Jumlah Pembelian</th>
+                    <th>Pakai Kas</th>
                     <th>Keterangan</th>
                     <th class="text-center" width="5%">Aksi</th>
                   </tr>
@@ -36,6 +37,17 @@
                       <td class="align-middle">{{ $item->nomor_kwitansi_pembelian }}</td>
                       <td class="align-middle">{{ $item->detail()->sum('jumlah') }} Barang</td>
                       <td class="align-middle">Rp. {{ number_format($item->detail()->sum('harga'), 0, ',', '.') }}</td>
+                      <td class="align-middle">
+                        @if ($item->kas != null)
+                          <span class="btn btn-xs btn-block btn-success">
+                            <span class="fa fa-check"></span>
+                          </span>
+                        @else
+                          <span class="btn btn-xs btn-block btn-danger">
+                            <span class="fa fa-times"></span>
+                          </span>
+                        @endif
+                      </td>
                       <td class="align-middle">{{ $item->keterangan ?? 'Tidak Ada Keterangan' }}</td>
                       <td class="align-middle text-center">
                         <div class="btn-group">
