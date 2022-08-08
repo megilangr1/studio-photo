@@ -134,7 +134,7 @@
       <table class="table table-borderless text-xs m-0">
         <tr>
           <td colspan="2" style="text-align: center !important;">
-            <h2>Laporan Data Transaksi Booking</h2>
+            <h2>Laporan Data Pencatatan Kas</h2>
           </td>
         </tr>
         <tr>
@@ -186,7 +186,7 @@
             </tr>
           @empty
             <tr>
-              <td class="text-center" colspan="4">Belum Ada Data Perolehan.</td>
+              <td class="text-center" colspan="4">Belum Ada Data.</td>
             </tr>
           @endforelse
           <tr>

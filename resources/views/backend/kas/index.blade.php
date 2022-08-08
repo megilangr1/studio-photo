@@ -99,7 +99,7 @@
           <div class="row">
             <div class="col-md-6 mb-2">
               <div class="form-group">
-                <label>Tanggal Booking:</label>
+                <label>Tanggal Pencatatan:</label>
                 <input type="date" name="date_start" class="form-control">
               </div>
             </div>

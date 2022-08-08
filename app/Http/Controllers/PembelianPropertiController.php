@@ -243,6 +243,7 @@ class PembelianPropertiController extends Controller
             if ($pembelian->kas != null) {
                 if (isset($request->pakai_kas) && $request->pakai_kas == 1) {
                     $updateKas = $pembelian->kas()->update([
+                        'tanggal_data' => $pembelian->tanggal_pembelian,
                         'nominal' => -1 * $total
                     ]);
                 } else {
@@ -251,7 +252,7 @@ class PembelianPropertiController extends Controller
             } else {
                 if (isset($request->pakai_kas) && $request->pakai_kas == 1) {
                     $insertKas = KasBesar::create([
-                        'tanggal_data' => date('Y-m-d'),
+                        'tanggal_data' => $pembelian->tanggal_pembelian,
                         'transaction_id' => $pembelian->id,
                         'jenis_data' => 2,
                         'asal_uang' => 'Pembelian Properti',

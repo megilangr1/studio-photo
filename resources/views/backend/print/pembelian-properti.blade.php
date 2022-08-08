@@ -134,7 +134,7 @@
       <table class="table table-borderless text-xs m-0">
         <tr>
           <td colspan="2" style="text-align: center !important;">
-            <h2>Laporan Data Transaksi Booking</h2>
+            <h2>Laporan Data Transaksi Pembelian Properti</h2>
           </td>
         </tr>
         <tr>
@@ -148,47 +148,54 @@
             </b>
           </td>
         </tr>
-        {{-- <tr>
-          <td style="padding: 0px 0px;" class="">Kode Rekening Belanja</td>
-          <td style="padding: 0px 0px;" class="text-center">:</td>
-          <td style="padding: 0px 5px;" class=""><b>{{ $rekening['kode_rek_belanja'] }}</b></td>
-        </tr>
-        <tr>
-          <td style="padding: 0px 0px;" class="">Nama Rekening Belanja</td>
-          <td style="padding: 0px 0px;" class="text-center">:</td>
-          <td style="padding: 0px 5px;" class=""><b>{{ $rekening['sub_rincian_objek'] }}</b></td>
-        </tr>
-        <tr>
-          <td style="padding: 0px 0px;" class="">Total Keseluruhan</td>
-          <td style="padding: 0px 0px;" class="text-center">:</td>
-          <td style="padding: 0px 5px;" class=""><b>Rp. {{ number_format($total, $numberFormat, ',', '.') }}</b></td>
-        </tr> --}}
       </table>
       <hr>
       <table class="table table-bordered text-xs">
         <thead>
           <tr>
             <th class="align-middle text-center" width="5%">No.</th>
-            <th class="align-middle text-center" width="10%">Tanggal</th>
-            <th class="align-middle">Paket</th>
-            <th class="align-middle text-right" width="20%">Nominal</th>
+            <th class="align-middle text-center" width="10%">Tanggal Pembelian</th>
+            <th class="align-middle">Nomor Kwitansi</th>
+            <th class="align-middle">Jumlah Barang</th>
+            <th class="align-middle">Jumlah Pembelian</th>
+            <th class="align-middle">Pakai Kas</th>
+            <th class="align-middle">Keterangan</th>
           </tr>
-        </thead>
+        </thead> 
         <tbody>
           @forelse ($data as $item)
+            @php
+              $total = 0;
+              foreach ($item->detail as $key => $value) {
+                $total = $total + ( (double) $value->jumlah * (double) $value->harga );
+              }
+            @endphp
             <tr>
-              <td class="align-middle text-center p-2">{{ $loop->iteration }}.</td>
-              <td class="align-middle text-center p-2">{{ date('d/m/Y', strtotime($item['tanggal_booking'])) }}</td>
-              <td class="align-middle p-2">{{ $item['paket']['nama_paket'] }}</td>
-              <td class="align-middle p-2 text-nowrap font-weight-bold" style="text-align: right !important;">
-                <div style="float: left;">Rp. </div>{{ number_format($item['total_pembayaran'], 0, ',', '.') }}
+              <td class="align-middle text-center">{{ $loop->iteration }}.</td>
+              <td class="align-middle">{{ date('d/m/Y', strtotime($item->tanggal_pembelian)) }}</td>
+              <td class="align-middle">{{ $item->nomor_kwitansi_pembelian }}</td>
+              <td class="align-middle">{{ $item->detail->count('id') }} Barang</td>
+              <td class="align-middle font-weight-bold" style="text-align: right;">
+                <div style="float: left;">Rp. </div>
+                {{ number_format($total, 0, ',', '.') }}
               </td>
+              <td class="align-middle text-center">{{ $item->kas != null ? 'Ya' : 'Tidak' }}</td>
+              <td class="align-middle text-center">{{ $item->keterangan ?? '-' }}</td>
             </tr>
           @empty
             <tr>
-              <td class="text-center" colspan="4">Belum Ada Data.</td>
+              <td colspan="7" class="align-middle text-center">Belum Ada Data.</td>
             </tr>
           @endforelse
+          <tr>
+            <td colspan="4" style="text-align: right !important;">
+              <b>Total : </b>
+            </td>
+            <td colspan="2" class="font-weight-bold">
+              Rp. &ensp; {{ number_format($total, 0, ',', '.') }}
+            </td>
+            <td>&ensp;</td>
+          </tr>
         </tbody>
       </table>
     </div>
