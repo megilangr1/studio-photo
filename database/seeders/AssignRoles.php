@@ -32,7 +32,7 @@ class AssignRoles extends Seeder
         ];
 
         try {
-            $user = User::where('name', '=', 'Administrator')->first();
+            $user = User::where('email', '=', 'admin@mail.com')->first();
             if ($user != null) {
                 $user->syncRoles($role);
                 $user->syncPermissions($permission);
