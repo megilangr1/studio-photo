@@ -357,12 +357,14 @@ class DetailForm extends Component
                     $nominalKas = $booking->total_pembayaran - $booking->nominal_dp;  
                 }
 
-                $createNew = 0;
+                $createNew = 1;
                 $checkKasBooking = KasBesar::where('transaction_id', '=', $booking->id)->where('asal_uang', 'Pembayaran Lunas')->first();
                 if ($checkKasBooking != null) {
                     if ($checkKasBooking->nominal != $nominalKas) {
                         $deleteKas = $checkKasBooking->delete();
                         $createNew = 1;
+                    } else {
+                        $createNew = 0;
                     }
                 }
 
