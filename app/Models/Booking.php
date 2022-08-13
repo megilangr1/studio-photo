@@ -25,4 +25,14 @@ class Booking extends Model
     {
         return $this->hasMany('App\Models\HasilFoto', 'id_booking', 'id');
     }
+
+    public function user()
+    {
+        return $this->belongsTo('App\Models\User', 'user_id', 'id');
+    }
+
+    public function pelanggan()
+    {
+        return $this->belongsTo('App\Models\Pelanggan', 'user_id', 'user_id');
+    }
 }

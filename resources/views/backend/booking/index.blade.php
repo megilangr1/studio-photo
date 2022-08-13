@@ -27,6 +27,7 @@
                     <th>Kode Transaksi</th>
                     <th>Tanggal Booking</th>
                     <th>Nama Pemesan</th>
+                    <th>Nomor HP</th>
                     <th class="text-center">Bukti Pembayaran</th>
                     <th class="text-center">Status Pembayaran</th>
                     <th class="text-center">Status Booking</th>
@@ -40,6 +41,7 @@
                       <td class="align-middle">{{ $item->kode_booking }}</td>
                       <td class="align-middle">{{ date('d/m/Y', strtotime($item->tanggal_booking)) }} | {{ $item->jam_mulai }}</td>
                       <td class="align-middle">{{ $item->nama_pemesan }}</td>
+                      <td class="align-middle">{{ $item->pelanggan->nomor_hp }}</td>
                       <td class="align-middle text-center">
                         @if ($item->file_bukti_pembayaran != null)
                           <a href="{{ asset($item->file_path) }}" data-toggle="lightbox" data-title="{{ $item->kode_booking }}">
