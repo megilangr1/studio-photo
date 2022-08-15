@@ -16,7 +16,8 @@ class AssignRoles extends Seeder
     {
         $role = [
             'Owner',
-            'Administrator'
+            'Administrator',
+            'Photography'
         ];
 
         $permission = [

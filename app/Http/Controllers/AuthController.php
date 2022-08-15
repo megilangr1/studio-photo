@@ -41,7 +41,7 @@ class AuthController extends Controller
 
         if (auth()->attempt($credentials)) {
             $checkRoles = $user->getRoleNames()->toArray();
-            if (in_array('Owner', $checkRoles) || in_array('Administrator', $checkRoles)) {
+            if (in_array('Owner', $checkRoles) || in_array('Administrator', $checkRoles) || in_array('Photography', $checkRoles)) {
                 return redirect()->route('backend.main');
             } else {
                 return redirect(route('frontend'));

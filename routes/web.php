@@ -46,7 +46,7 @@ Route::middleware(['auth'])->group(function () {
 });
 
 
-Route::prefix('backend')->middleware(['auth', 'role:Owner|Administrator'])->name('backend.')->group(function () {
+Route::prefix('backend')->middleware(['auth', 'role:Owner|Administrator|Photography'])->name('backend.')->group(function () {
     Route::get('/', [BackendController::class, 'main'])->name('main');
 
     Route::resource('user', UserController::class)->middleware('permission:Data Pengguna');
