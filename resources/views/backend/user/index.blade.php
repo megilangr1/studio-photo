@@ -34,11 +34,15 @@
                       <td class="align-middle">{{ $item->email }}</td>
                       <td class="align-middle">
                         <ul class="m-0">
-                          @foreach ($item->roles()->pluck('name') as $roles)
+                          @forelse ($item->roles()->pluck('name') as $roles)
                             <li>
                               {{ $roles }}
                             </li>
-                          @endforeach
+                          @empty
+                            <span class="btn btn-outline-secondary btn-xs">
+                              Belum Di-Atur
+                            </span>
+                          @endforelse
                         </ul>
                       </td>
                       <td class="align-middle text-center">
