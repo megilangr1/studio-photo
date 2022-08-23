@@ -36,7 +36,7 @@
                 </thead>
                 <tbody>
                   @forelse ($bookings as $item)
-                    <tr>
+                    <tr class="expandable-header" data-widget="expandable-table" wire:ignore.self aria-expanded="false">
                       <td class="align-middle text-center">{{ ($bookings->currentpage()-1) * $bookings->perpage() + $loop->index + 1 }}.</td>
                       <td class="align-middle">{{ $item->kode_booking }}</td>
                       <td class="align-middle">{{ date('d/m/Y', strtotime($item->tanggal_booking)) }} | {{ $item->jam_mulai }}</td>
@@ -140,10 +140,42 @@
                             </form>
                           @endif
                         @endif
-                            
                         </div>
                       </td>
                     </tr>
+                    <tr class="expandable-body text-sm" wire:ignore.self>
+                      <td colspan="9" style="background-color: #ebebeb !important;">
+                        <div class="row">
+                          <div class="col-md-4 text-center">
+                            <label>Nama Paket : {{ $item->paket->nama_paket }}</label>
+                          </div>
+                          <div class="col-md-4 text-center">
+                            <label>Harga Paket : Rp. {{ number_format($item->nominal_booking, 0, ',', '.') }}</label>
+                          </div>
+                          <div class="col-md-4 text-center">
+                            <label>Minimal DP : Rp. {{ number_format(($item->nominal_booking / 2), 0, ',', '.') }}</label>
+                          </div>
+                          <div class="col-md-4 text-center">
+                            <label>DP Di-Bayar : Rp. {{ number_format($item->nominal_dp, 0, ',', '.') }}</label>
+                          </div>
+                          <div class="col-md-4 text-center">
+                            <label>Sisa Yang Harus di-Bayar : Rp. {{ number_format(($item->total_pembayaran - $item->nominal_dp), 0, ',', '.') }}</label>
+                          </div>
+                          <div class="col-md-4 text-center">
+                            <label>Total Pembayaran : Rp. {{ number_format($item->total_pembayaran, 0, ',', '.') }}</label>
+                          </div>
+                          {{-- <div class="col-md-4 text-center pt-2">
+                            Banyaknya Barang : <label class="m-0"> {{ $item['banyaknya_barang'] }} Barang</label>
+                          </div>
+                          <div class="col-md-4 text-center pt-2">
+                            Total Nilai Pembelian : <label class="m-0"> Rp. {{ number_format($item['total_pembelian'], 2, ',', '.') }}</label>
+                          </div>
+                          <div class="col-md-4 text-center pt-2">
+                            Total Nilai Perolehan : <label class="m-0"> Rp. {{ number_format($item['total_perolehan'], 2, ',', '.') }}</label>
+                          </div> --}}
+                        </div>
+                      </td>
+                    </tr> 
                   @empty
                     <tr>
                       <td colspan="6" class="align-middle text-center">Belum Data Reservasi.</td>
