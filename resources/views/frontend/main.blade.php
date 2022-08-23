@@ -35,15 +35,17 @@
 
       <div class="row portfolio-container" data-aos="fade-up" data-aos-delay="200">
         @forelse ($pakets as $item)
-          <div class="col-lg-4 col-md-6 portfolio-item filter-app text-center p-3">
-            <img src="{{ $item->file_paket != null ? asset($item->file_path) : asset('frontend/img/portfolio/portfolio-1.jpg') }}" class="img-fluid" alt="" style="width: 250px !important; height: 250px !important;">
-            <div class="portfolio-info py-2">
-              <h4>{{ $item->nama_paket }}</h4>
-              <p>Rp. {{ number_format($item->harga, 0, ',', '.') }}</p>
-              {{-- <a href="{{ asset('frontend') }}/img/portfolio/portfolio-1.jpg" data-gallery="portfolioGallery" class="portfolio-lightbox preview-link" title="App 1"><i class="bx bx-plus"></i></a> --}}
-              {{-- <a href="portfolio-details.html" class="details-link" title="More Details"><i class="bx bx-link"></i></a> --}}
+          <a href="{{ route('paket', $item->id) }}">
+            <div class="col-lg-4 col-md-6 portfolio-item filter-app text-center p-3">
+              <img src="{{ $item->file_paket != null ? asset($item->file_path) : asset('frontend/img/portfolio/portfolio-1.jpg') }}" class="img-fluid" alt="" style="width: 250px !important; height: 250px !important;">
+              <div class="portfolio-info py-2">
+                <h4 style="color: #565656;">{{ $item->nama_paket }}</h4>
+                <p style="color: #565656;">Rp. {{ number_format($item->harga, 0, ',', '.') }}</p>
+                {{-- <a href="{{ asset('frontend') }}/img/portfolio/portfolio-1.jpg" data-gallery="portfolioGallery" class="portfolio-lightbox preview-link" title="App 1"><i class="bx bx-plus"></i></a> --}}
+                {{-- <a href="portfolio-details.html" class="details-link" title="More Details"><i class="bx bx-link"></i></a> --}}
+              </div>
             </div>
-          </div>
+          </a>
         @empty
           <div class="col-12 text-center">
             <h5>Belum Ada Paket Foto.</h5>

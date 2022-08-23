@@ -16,7 +16,7 @@ class BookingController extends Controller
      */
     public function index()
     {
-        $bookings = Booking::orderBy('tanggal_booking', 'DESC')->paginate(25);
+        $bookings = Booking::orderBy('created_at', 'DESC')->orderBy('tanggal_booking', 'DESC')->paginate(25);
         return view('backend.booking.index', compact('bookings'));
     }
 
@@ -106,6 +106,17 @@ class BookingController extends Controller
         DB::beginTransaction();
         try {
             $booking = Booking::where('id', '=', $id)->firstOrFail();
+
+            $check = Booking::where('id', '!=', $booking->id)
+                ->where('tanggal_booking', '=', $booking->tanggal_booking)
+                ->where('jam_mulai', '=', $booking->jam_mulai)
+                ->where('status_booking', '=', 1)
+                ->first();
+            if ($check != null) {
+                session()->flash('error', 'Tidak Dapat di-Konfirmasi <br> Sudah ada reservasi pada Tanggal dan Jam yang sama !');
+                return redirect(route('backend.booking.index'));
+            }
+
             $updateBooking = $booking->update([
                 'admin_id' => auth()->user()->id,
                 'status_booking' => 1
