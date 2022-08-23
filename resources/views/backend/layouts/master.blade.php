@@ -305,26 +305,23 @@
   </script>
 @endif
 
-@isset($livewire)
-  @livewireScripts
-  <script>
-    Livewire.on('success', data => {
-      toastr.success(data, "Berhasil");
-    });
-  
-    Livewire.on('info', data => {
-      toastr.info(data, "Pemberitahuan");
-    });
-  
-    Livewire.on('warning', data => {
-      toastr.warning(data, "Peringatan !");
-    });
-  
-    Livewire.on('error', data => {
-      toastr.error(data, "Kesalahan !!");
-    });
-  </script>
-@endisset
+<script>
+  Livewire.on('success', data => {
+    toastr.success(data, "Berhasil");
+  });
+
+  Livewire.on('info', data => {
+    toastr.info(data, "Pemberitahuan");
+  });
+
+  Livewire.on('warning', data => {
+    toastr.warning(data, "Peringatan !");
+  });
+
+  Livewire.on('error', data => {
+    toastr.error(data, "Kesalahan !!");
+  });
+</script>
 
 @yield('script')
 @stack('script')

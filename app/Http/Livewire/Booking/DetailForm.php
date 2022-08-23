@@ -46,6 +46,7 @@ class DetailForm extends Component
         'status_booking' => null,
         'file_bukti_pembayaran' => null,
         'file_path' => null,
+        'gdrive_link' => null,
 
         'file_bukti_pembayaran_now' => null,
         'file_path_now' => null,
@@ -74,6 +75,8 @@ class DetailForm extends Component
         "20:00",
         "20:30",
     ];
+
+    public $gdrive = null;
 
     public $addOn = [];
 
@@ -112,6 +115,9 @@ class DetailForm extends Component
             $this->pemesanan['status_booking'] = $booking['status_booking'];
             $this->pemesanan['file_bukti_pembayaran_now'] = $booking['file_bukti_pembayaran'];
             $this->pemesanan['file_path_now'] = $booking['file_path'];
+            
+            $this->pemesanan['gdrive_link'] = $booking['gdrive_link'];
+            $this->gdrive = $booking['gdrive_link'];
 
             array_push($this->jam, $booking['jam_mulai']);
             if (isset($booking['add_on']) && $booking['add_on'] != null) {
@@ -383,15 +389,13 @@ class DetailForm extends Component
             if ($uploadBuktiBayar) { $uploadBuktiBayar = $this->pemesanan['file_bukti_pembayaran']->storeAs('/', $file_bukti_pembayaran, $storage_disk_file); }
 
             DB::commit();
-            session()->flash('info', 'Data Booking / Reservasi di-Ubah !');
 
-            return redirect()->route('backend.booking.index');
+            session()->flash('info', 'Data Booking / Reservasi di-Ubah !');
+            return redirect()->route('backend.booking.edit', $booking->id);
         } catch (\Exception $e) {
             DB::rollBack();
             dd($e);
         }
-
-        dd($this->pemesanan);
     }
     
     public function setVal()
@@ -474,6 +478,22 @@ class DetailForm extends Component
         }
 
         $this->refreshFoto();
+    }
+
+    public function updateLink()
+    {
+        try {
+            $booking = Booking::where('id', '=', $this->booking['id'])->first();
+
+            $update = $booking->update([
+                'gdrive_link' => $this->gdrive
+            ]);
+
+            $this->pemesanan['gdrive_link'] = $this->gdrive;
+            $this->emit('info', 'Link Google Drive telah di-Ubah !');
+        } catch (\Exception $e) {
+            dd($e);
+        }
     }
 
     public function dummy()

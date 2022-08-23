@@ -328,6 +328,25 @@
         <div class="tab-pane fade" wire:ignore.self id="hasil" role="tabpanel" aria-labelledby="hasil-tab">
 					<div class="row py-1 px-4">
 						<div class="col-md-9">
+							<div class="form-group">
+								<label for="gdrive_link">Link Google Drive :</label>
+								<div class="float-right">
+									@if ($pemesanan['gdrive_link'] != null)
+									<a href="{{ $pemesanan['gdrive_link'] }}" target="_blank">
+										<span class="badge badge-info">Buka Link Google Drive</span>
+									</a>
+									@endif
+								</div>
+								<input type="text" wire:model="gdrive" name="gdrive_link" id="gdrive_link" class="form-control" placeholder="Silahkan Masukan Link Google Drive...">
+							</div>
+						</div>
+						<div class="col-md-3">
+							<label for="">&ensp;</label>
+							<button type="button" class="btn btn-block btn-info" wire:click="updateLink">
+								<span class="fa fa-check"></span> &ensp; Update Link Google Drive 
+							</button>
+						</div>
+						<div class="col-md-9">
 							<div class="form-group"> 
 								<label for="upload_hasil_foto" wire:click="dummy()">Upload File Hasil Foto :</label>
 								<div style="{{ $errors->has('upload_hasil_foto') ? 'border: 1px solid #dc3545 !important; border-radius:4px;':'' }}">
