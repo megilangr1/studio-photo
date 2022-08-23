@@ -101,6 +101,9 @@
                               <span class="fa fa-check"></span>
                             </button>
                           </form>
+                          <a href="{{ route('backend.booking.edit', $item->id) }}" class="btn btn-sm btn-warning borad">
+                            <span class="fa fa-edit"></span>
+                          </a>
                           <form action="{{ route('backend.booking.reject', $item->id) }}" method="post">
                             @csrf
                             @method('PUT')

@@ -119,7 +119,8 @@ class DetailForm extends Component
             $this->pemesanan['gdrive_link'] = $booking['gdrive_link'];
             $this->gdrive = $booking['gdrive_link'];
 
-            array_push($this->jam, $booking['jam_mulai']);
+            $this->jam = $this->defaultJam;
+            // array_push($this->jam, $booking['jam_mulai']);
             if (isset($booking['add_on']) && $booking['add_on'] != null) {
                 foreach ($booking['add_on'] as $key => $value) {
                     $this->addOn[$value['id_biaya_lainnya']] = true;
@@ -298,100 +299,109 @@ class DetailForm extends Component
             $booking = Booking::where('id', '=', $this->booking['id'])->first();
             $adminId = null;
             $userId = $booking->user_id;
-            
-            if ($this->mode == 'backend') {
-                $adminId = Auth::user()->id;
-            }
 
-            $storage_disk_file = 'images';
-            // File Pembayaran
-            $uploadBuktiBayar = 0;
-            $file_bukti_pembayaran = $booking->file_bukti_pembayaran;
-            $storage_path_file_paket = $booking->file_path;
-            if ($this->pemesanan['file_bukti_pembayaran'] != null) {
-                $nama_file = $booking->kode_booking;
-
-                $file_bukti_pembayaran = $nama_file . '-'. time() . '.' . $this->pemesanan['file_bukti_pembayaran']->getClientOriginalExtension();
-                $storage_path_file_paket = $storage_disk_file .'/' . $file_bukti_pembayaran;
-                $uploadBuktiBayar = 1;
-            }
-
-            $addOnBooking = [];
-            foreach ($this->addOn as $key => $value) {
-                if ($value == true) {
-                    $addOnData = [
-                        'id_booking' => $booking->id,
-                        'id_paket' => $this->biayaLainnya[$key]['paket_id'],
-                        'id_biaya_lainnya' => $this->biayaLainnya[$key]['id'],
-                        'nama_biaya' => $this->biayaLainnya[$key]['nama_biaya'],
-                        'nominal_biaya' => $this->biayaLainnya[$key]['nominal_biaya'],
-                    ];
-
-                    array_push($addOnBooking, $addOnData);
+            $check = Booking::where('id', '!=', $booking->id)
+                ->where('tanggal_booking', '=', $booking->tanggal_booking)
+                ->where('jam_mulai', '=', $booking->jam_mulai)
+                ->where('status_booking', '=', 1)
+                ->first();
+            if ($check != null) {
+                $this->emit('error', 'Tidak Dapat di-Konfirmasi <br> Sudah ada reservasi pada Tanggal dan Jam yang sama !');
+            } else {
+                if ($this->mode == 'backend') {
+                    $adminId = Auth::user()->id;
                 }
-            }
-
-            $updateBooking = $booking->update([
-                'admin_id' => $adminId,
-                'user_id' => $userId,
-                'nama_pemesan' => $this->pemesanan['nama_pemesan'],
-                'id_paket' => $this->pemesanan['id_paket'],
-                'durasi' => $this->paket['durasi'],
-                'tanggal_booking' => $this->pemesanan['tanggal_booking'],
-                'jam_mulai' => $this->pemesanan['jam_mulai'],
-                'jam_selesai' => $this->pemesanan['jam_selesai'],
-                'jumlah_orang' => $this->pemesanan['jumlah_orang'],
-                'nominal_booking' => $this->pemesanan['nominal_booking'],
-                'rekening_transfer' => $this->pemesanan['rekening_transfer'],
-                'nominal_dp' => $this->pemesanan['nominal_dp'],
-                'tambah_foto' => $this->pemesanan['tambah_foto'],
-                "harga_paket_tambah_foto" => $this->pemesanan['harga_paket_tambah_foto'],
-                "harga_akhir_tambah_foto" => $this->pemesanan['harga_akhir_tambah_foto'],
-                "total_pembayaran" => $this->pemesanan['total_pembayaran'],
-                "status_bayar" => $this->pemesanan['status_bayar'],
-                "status_booking" => $this->pemesanan['status_booking'],
-                'file_bukti_pembayaran' => $file_bukti_pembayaran ?? null,
-                'file_path' => $storage_path_file_paket ?? null,
-            ]);
-
-            $deleteAddOn = $booking->addOn()->delete();
-            $biayaLainnya = AddOnBooking::insert($addOnBooking); 
-            if ($booking->status_bayar == 2) {
-                $nominalKas = $booking->total_pembayaran;
-                $checkKasBooking = KasBesar::where('transaction_id', '=', $booking->id)->where('asal_uang', 'DP Booking')->first();
-                if ($checkKasBooking != null) {
-                    $nominalKas = $booking->total_pembayaran - $booking->nominal_dp;  
+    
+                $storage_disk_file = 'images';
+                // File Pembayaran
+                $uploadBuktiBayar = 0;
+                $file_bukti_pembayaran = $booking->file_bukti_pembayaran;
+                $storage_path_file_paket = $booking->file_path;
+                if ($this->pemesanan['file_bukti_pembayaran'] != null) {
+                    $nama_file = $booking->kode_booking;
+    
+                    $file_bukti_pembayaran = $nama_file . '-'. time() . '.' . $this->pemesanan['file_bukti_pembayaran']->getClientOriginalExtension();
+                    $storage_path_file_paket = $storage_disk_file .'/' . $file_bukti_pembayaran;
+                    $uploadBuktiBayar = 1;
                 }
-
-                $createNew = 1;
-                $checkKasBooking = KasBesar::where('transaction_id', '=', $booking->id)->where('asal_uang', 'Pembayaran Lunas')->first();
-                if ($checkKasBooking != null) {
-                    if ($checkKasBooking->nominal != $nominalKas) {
-                        $deleteKas = $checkKasBooking->delete();
-                        $createNew = 1;
-                    } else {
-                        $createNew = 0;
+    
+                $addOnBooking = [];
+                foreach ($this->addOn as $key => $value) {
+                    if ($value == true) {
+                        $addOnData = [
+                            'id_booking' => $booking->id,
+                            'id_paket' => $this->biayaLainnya[$key]['paket_id'],
+                            'id_biaya_lainnya' => $this->biayaLainnya[$key]['id'],
+                            'nama_biaya' => $this->biayaLainnya[$key]['nama_biaya'],
+                            'nominal_biaya' => $this->biayaLainnya[$key]['nominal_biaya'],
+                        ];
+    
+                        array_push($addOnBooking, $addOnData);
                     }
                 }
-
-                if ($createNew) {
-                    $insertKas = KasBesar::create([
-                        'tanggal_data' => date('Y-m-d', strtotime($booking->tanggal_booking)),
-                        'transaction_id' => $booking->id,
-                        'jenis_data' => 1,
-                        'asal_uang' => 'Pembayaran Lunas',
-                        'nominal' => $nominalKas,
-                        'keterangan' => null,
-                    ]);
+    
+                $updateBooking = $booking->update([
+                    'admin_id' => $adminId,
+                    'user_id' => $userId,
+                    'nama_pemesan' => $this->pemesanan['nama_pemesan'],
+                    'id_paket' => $this->pemesanan['id_paket'],
+                    'durasi' => $this->paket['durasi'],
+                    'tanggal_booking' => $this->pemesanan['tanggal_booking'],
+                    'jam_mulai' => $this->pemesanan['jam_mulai'],
+                    'jam_selesai' => $this->pemesanan['jam_selesai'],
+                    'jumlah_orang' => $this->pemesanan['jumlah_orang'],
+                    'nominal_booking' => $this->pemesanan['nominal_booking'],
+                    'rekening_transfer' => $this->pemesanan['rekening_transfer'],
+                    'nominal_dp' => $this->pemesanan['nominal_dp'],
+                    'tambah_foto' => $this->pemesanan['tambah_foto'],
+                    "harga_paket_tambah_foto" => $this->pemesanan['harga_paket_tambah_foto'],
+                    "harga_akhir_tambah_foto" => $this->pemesanan['harga_akhir_tambah_foto'],
+                    "total_pembayaran" => $this->pemesanan['total_pembayaran'],
+                    "status_bayar" => $this->pemesanan['status_bayar'],
+                    "status_booking" => $this->pemesanan['status_booking'],
+                    'file_bukti_pembayaran' => $file_bukti_pembayaran ?? null,
+                    'file_path' => $storage_path_file_paket ?? null,
+                ]);
+    
+                $deleteAddOn = $booking->addOn()->delete();
+                $biayaLainnya = AddOnBooking::insert($addOnBooking); 
+                if ($booking->status_bayar == 2) {
+                    $nominalKas = $booking->total_pembayaran;
+                    $checkKasBooking = KasBesar::where('transaction_id', '=', $booking->id)->where('asal_uang', 'DP Booking')->first();
+                    if ($checkKasBooking != null) {
+                        $nominalKas = $booking->total_pembayaran - $booking->nominal_dp;  
+                    }
+    
+                    $createNew = 1;
+                    $checkKasBooking = KasBesar::where('transaction_id', '=', $booking->id)->where('asal_uang', 'Pembayaran Lunas')->first();
+                    if ($checkKasBooking != null) {
+                        if ($checkKasBooking->nominal != $nominalKas) {
+                            $deleteKas = $checkKasBooking->delete();
+                            $createNew = 1;
+                        } else {
+                            $createNew = 0;
+                        }
+                    }
+    
+                    if ($createNew) {
+                        $insertKas = KasBesar::create([
+                            'tanggal_data' => date('Y-m-d', strtotime($booking->tanggal_booking)),
+                            'transaction_id' => $booking->id,
+                            'jenis_data' => 1,
+                            'asal_uang' => 'Pembayaran Lunas',
+                            'nominal' => $nominalKas,
+                            'keterangan' => null,
+                        ]);
+                    }
                 }
+    
+                if ($uploadBuktiBayar) { $uploadBuktiBayar = $this->pemesanan['file_bukti_pembayaran']->storeAs('/', $file_bukti_pembayaran, $storage_disk_file); }
+    
+                DB::commit();
+    
+                session()->flash('info', 'Data Booking / Reservasi di-Ubah !');
+                return redirect()->route('backend.booking.edit', $booking->id);
             }
-
-            if ($uploadBuktiBayar) { $uploadBuktiBayar = $this->pemesanan['file_bukti_pembayaran']->storeAs('/', $file_bukti_pembayaran, $storage_disk_file); }
-
-            DB::commit();
-
-            session()->flash('info', 'Data Booking / Reservasi di-Ubah !');
-            return redirect()->route('backend.booking.edit', $booking->id);
         } catch (\Exception $e) {
             DB::rollBack();
             dd($e);
