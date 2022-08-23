@@ -7,6 +7,7 @@ use App\Models\Booking;
 use App\Models\HasilFoto;
 use App\Models\KasBesar;
 use App\Models\Paket;
+use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
@@ -21,6 +22,7 @@ class DetailForm extends Component
     public $booking = [];
     public $jam = [];
     public $dataPaket = [];
+    public $pelanggan = [];
 
     public $pemesanan = [];
     public $paket = [];
@@ -50,6 +52,8 @@ class DetailForm extends Component
 
         'file_bukti_pembayaran_now' => null,
         'file_path_now' => null,
+
+        'user_id' => null,
     ];
     public $defaultJam = [
         "10:00",
@@ -87,6 +91,7 @@ class DetailForm extends Component
         'setJam',
         'setPaket',
         'setVal',
+        'selectPelanggan'
     ];
 
     public function mount($mode = "", $booking = [])
@@ -130,9 +135,24 @@ class DetailForm extends Component
             foreach ($booking['hasil_foto'] as $key => $value) {
                 $this->hasilFoto[$value['id']] = $value; 
             }
+
+            if ($booking['user_id'] != null) {
+                $getUser = User::join('pelanggans', 'pelanggans.user_id', '=', 'users.id')->where('user_id', '=', $booking['user_id'])->first();
+                if ($getUser != null) {
+                    $this->pelanggan = $getUser->toArray();
+                    $this->pemesanan['user_id'] = $getUser['user_id'];
+                }
+            }
         }
 
         $this->getPaket();
+    }
+
+    public function selectPelanggan($data)
+    {
+        $this->pelanggan = $data;
+        $this->pemesanan['nama_pemesan'] = $data['nama_lengkap'];
+        $this->pemesanan['user_id'] = $data['user_id'];
     }
 
     public function updatedPemesanan($value, $key)
@@ -300,18 +320,23 @@ class DetailForm extends Component
             $adminId = null;
             $userId = $booking->user_id;
 
+            if ($this->pemesanan['user_id'] != null) {
+                $userId = $this->pemesanan['user_id'];
+            }
+
             $check = Booking::where('id', '!=', $booking->id)
-                ->where('tanggal_booking', '=', $booking->tanggal_booking)
-                ->where('jam_mulai', '=', $booking->jam_mulai)
+                ->where('tanggal_booking', '=', $this->pemesanan['tanggal_booking'])
+                ->where('jam_mulai', '=', $this->pemesanan['jam_mulai'])
                 ->where('status_booking', '=', 1)
                 ->first();
             if ($check != null) {
                 $this->emit('error', 'Tidak Dapat di-Konfirmasi <br> Sudah ada reservasi pada Tanggal dan Jam yang sama !');
             } else {
+                $this->pemesanan['status_booking'] = 1;
                 if ($this->mode == 'backend') {
                     $adminId = Auth::user()->id;
                 }
-    
+
                 $storage_disk_file = 'images';
                 // File Pembayaran
                 $uploadBuktiBayar = 0;

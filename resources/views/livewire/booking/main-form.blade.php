@@ -3,10 +3,24 @@
     <div class="col-md-4">
       <div class="form-group">
         <label for="nama_pemesan">Nama Pemesan : </label>
-        <input type="text" wire:model="pemesanan.nama_pemesan" name="nama_pemesan" id="nama_pemesan" class="form-control {{ $errors->has('pemesanan.nama_pemesan') ? 'is-invalid':'' }}" placeholder="Masukan Nama Pemesan..." {{ $mode == 'frontend' ? 'disabled':'' }} required autofocus>
-        <div class="invalid-feedback">
-          {{ $errors->first('pemesanan.nama_pemesan') }}
-        </div>
+        @if ($mode == 'backend')
+          <div class="input-group">
+            <input type="text" wire:model="pemesanan.nama_pemesan" name="nama_pemesan" id="nama_pemesan" class="form-control {{ $errors->has('pemesanan.nama_pemesan') ? 'is-invalid':'' }}" placeholder="Masukan Nama Pemesan..." required autofocus>
+            <div class="input-group-append">
+              <span class="input-group-append">
+                <button type="button" class="btn btn-info" style="border-top-left-radius: 0px !important; border-bottom-left-radius: 0px !important;" data-toggle="modal"  data-target="#modal-data-pelanggan" data-backdrop="static" data-keyboard="false" wire:click="$emitTo('modal.pelanggan-modal', 'getMainPelanggan')">Pilih Pelanggan</button>
+              </span>
+            </div>
+            <div class="invalid-feedback">
+              {{ $errors->first('pemesanan.nama_pemesan') }}
+            </div>
+          </div>
+        @else
+          <input type="text" wire:model="pemesanan.nama_pemesan" name="nama_pemesan" id="nama_pemesan" class="form-control {{ $errors->has('pemesanan.nama_pemesan') ? 'is-invalid':'' }}" placeholder="Masukan Nama Pemesan..." {{ $mode == 'frontend' ? 'disabled':'' }} required autofocus>
+          <div class="invalid-feedback">
+            {{ $errors->first('pemesanan.nama_pemesan') }}
+          </div>
+        @endif
       </div>
     </div>
     <div class="col-md-5 {{ $errors->has('pemesanan.id_paket') ? 'text-danger':'' }}">
@@ -118,7 +132,12 @@
       </button>
     </div>
   </div>
+  @if ($mode == 'backend')
+    @livewire('modal.pelanggan-modal');
+  @endif
 </div>
+
+
 
 @push('script')
 <script>

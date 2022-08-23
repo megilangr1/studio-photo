@@ -33,6 +33,8 @@ class MainForm extends Component
         'status_bayar' => null,
         'file_bukti_pembayaran' => null,
         'file_path' => null,
+
+        'user_id' => null,
     ];
     public $defaultJam = [
         "10:00",
@@ -64,6 +66,7 @@ class MainForm extends Component
     protected $listeners = [
         'setJam',
         'setPaket',
+        'selectPelanggan',
     ];
 
     public function mount($mode = "", $paket = null)
@@ -83,6 +86,13 @@ class MainForm extends Component
                 $this->selectPaket = $check->id;
             }
         }
+    }
+
+    public function selectPelanggan($data)
+    {
+        $this->pelanggan = $data;
+        $this->pemesanan['nama_pemesan'] = $data['nama_lengkap'];
+        $this->pemesanan['user_id'] = $data['user_id'];
     }
 
     public function updatedPemesanan($value, $key)
@@ -227,6 +237,9 @@ class MainForm extends Component
             if ($this->mode == 'backend') {
                 $adminId = Auth::user()->id;
                 $status_booking = 1;
+                if ($this->pemesanan['user_id'] != null) {
+                    $userId = $this->pemesanan['user_id'];
+                }
             } else {
                 $userId = Auth::user()->id;
             }

@@ -97,9 +97,16 @@
                   <td class="align-middle text-center">
                     @switch($item->status_booking)
                         @case(1)
-                          <a href="{{ route('hasil-foto', $item->kode_booking) }}" class="btn btn-secondary" style="padding: 5px 5px; font-size: 12px;" style="border-radius: 0px !important;">
-                            Lihat Hasil Foto
-                          </a>
+                          <div class="btn-group">
+                            <a href="{{ route('hasil-foto', $item->kode_booking) }}" class="btn btn-secondary" style="padding: 5px 5px; font-size: 10px;" style="border-radius: 0px !important;">
+                              Hasil Foto
+                            </a>
+                            @if ($item->gdrive_link != null)
+                              <a href="{{ $item->gdrive_link }}" target="_blank" class="btn btn-success" style="padding: 5px 5px; font-size: 10px;" style="border-radius: 0px !important;">
+                                Link Drive
+                              </a>
+                            @endif
+                          </div>
                             @break
                         @case(2)
                           <a href="#" class="btn btn-secondary" style="padding: 5px 5px; font-size: 12px;" style="border-radius: 0px !important;">

@@ -26,9 +26,21 @@
 						<div class="col-md-4">
 							<div class="form-group">
 								<label for="nama_pemesan" wire:click="dummy()">Nama Pemesan : </label>
-								<input type="text" wire:model="pemesanan.nama_pemesan" name="nama_pemesan" id="nama_pemesan" class="form-control {{ $errors->has('pemesanan.nama_pemesan') ? 'is-invalid':'' }}" placeholder="Masukan Nama Pemesan..." required autofocus>
-								<div class="invalid-feedback">
-									{{ $errors->first('pemesanan.nama_pemesan') }}
+								<div class="float-right">
+									@if ($booking['user_id'] != null)
+										<span class="badge badge-info">Terkait User</span>
+									@endif
+								</div>
+								<div class="input-group">
+									<input type="text" wire:model="pemesanan.nama_pemesan" name="nama_pemesan" id="nama_pemesan" class="form-control {{ $errors->has('pemesanan.nama_pemesan') ? 'is-invalid':'' }}" placeholder="Masukan Nama Pemesan..." required autofocus>
+									<div class="input-group-append">
+										<span class="input-group-append">
+											<button type="button" class="btn btn-info" style="border-top-left-radius: 0px !important; border-bottom-left-radius: 0px !important;" data-toggle="modal"  data-target="#modal-data-pelanggan" data-backdrop="static" data-keyboard="false" wire:click="$emitTo('modal.pelanggan-modal', 'getMainPelanggan')">Pilih Pelanggan</button>
+										</span>
+									</div>
+									<div class="invalid-feedback">
+										{{ $errors->first('pemesanan.nama_pemesan') }}
+									</div>
 								</div>
 							</div>
 						</div>
@@ -396,6 +408,7 @@
 		</div>
 	</div>
 
+	@livewire('modal.pelanggan-modal')
 </div>
 
 @push('script')
