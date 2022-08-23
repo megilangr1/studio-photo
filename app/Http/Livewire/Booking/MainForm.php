@@ -59,12 +59,14 @@ class MainForm extends Component
         "20:30",
     ];
 
+    public $selectPaket = null;
+
     protected $listeners = [
         'setJam',
         'setPaket',
     ];
 
-    public function mount($mode = "")
+    public function mount($mode = "", $paket = null)
     {
         $this->mode = $mode;
         $this->pemesanan = $this->params;
@@ -74,6 +76,13 @@ class MainForm extends Component
         }
 
         $this->getPaket();
+
+        if ($paket != null) {
+            $check = Paket::where('id', '=', $paket)->first();
+            if ($check != null) {
+                $this->selectPaket = $check->id;
+            }
+        }
     }
 
     public function updatedPemesanan($value, $key)

@@ -87,4 +87,9 @@ class MainController extends Controller
             return redirect(route('data-booking'));
         }
     }
+    
+    public function paket(Paket $paket)
+    {
+        return view('frontend.paket', compact('paket'));
+    }
 }

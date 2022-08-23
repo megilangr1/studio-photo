@@ -134,7 +134,6 @@
 
     $('#paket').on('change', function() {
       var value = $(this).val();
-      console.log(value);
 
       Livewire.emit('setPaket', value);
     });
@@ -158,4 +157,12 @@
     });
   });
 </script>
+
+@if ($selectPaket != null)
+<script>
+  $(document).ready(function () {
+    $('#paket').val(@this.selectPaket).trigger('change');
+  });
+</script>
+@endif
 @endpush

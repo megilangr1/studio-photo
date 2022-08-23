@@ -25,7 +25,7 @@
       <div class="row">
         <div class="col-md-1">&ensp;</div>
         <div class="col-md-10">
-					@livewire('booking.main-form', ['mode' => 'frontend'])
+					@livewire('booking.main-form', ['mode' => 'frontend', 'paket' => $_GET['paket'] ?? null])
         </div>
         <div class="col-md-1">&ensp;</div>
       </div>
