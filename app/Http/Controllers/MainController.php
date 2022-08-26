@@ -150,4 +150,24 @@ class MainController extends Controller
     {
         return view('frontend.faq');
     }
+
+    public function caraBayar($kode)
+    {
+        if (Auth::check()) {
+            $user = Auth::user();
+            $booking = Booking::where('kode_booking', '=', $kode)->where('user_id', '=', $user->id)->first();
+            if ($booking == null) {
+                return redirect(route('frontend'));
+            } else {
+                $booking = $booking->toArray();
+                // 2022-08-26 11:03:38
+                $startTime = strtotime($booking['created_at']);
+                $endTime = strtotime($booking['created_at'] . '+1 Hour');
+                $now = strtotime(date('Y-m-d H:i:s'));
+                $timer = $endTime - $now;
+
+                return view('frontend.cara-bayar', compact('booking', 'timer'));
+            }
+        }
+    }
 }

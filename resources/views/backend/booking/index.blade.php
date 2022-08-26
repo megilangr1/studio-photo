@@ -75,7 +75,11 @@
                         @switch($item->status_booking)
                             @case(0)
                               <span class="btn btn-warning btn-sm">
-                                Menunggu Konfirmasi
+                                @if ($item->status_bayar == 0)
+                                  Menunggu Pembayaran
+                                @else
+                                  Menunggu Konfirmasi
+                                @endif
                               </span>
                               @break
                             @case(1)
