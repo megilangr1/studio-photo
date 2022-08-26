@@ -15,11 +15,23 @@ class AuthController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('guest')->except('logout');
+        $this->middleware('guest')->except('login', 'logout');
     }
 
     public function login()
     {
+        if (Auth::check()) {
+            $user = User::where('id', '=', Auth::user()->id)->first();
+            if ($user != null) {
+                $checkRoles = $user->getRoleNames()->toArray();
+                if (in_array('Owner', $checkRoles) || in_array('Administrator', $checkRoles) || in_array('Photography', $checkRoles)) {
+                    return redirect()->route('backend.main');
+                } else {
+                    return redirect(route('frontend'));
+                }
+            }
+        }
+
         // return view('auth.login');
         return view('frontend.login');
     }

@@ -25,7 +25,13 @@
       <div class="row">
         <div class="col-md-1">&ensp;</div>
         <div class="col-md-10">
-					@livewire('booking.main-form', ['mode' => 'frontend', 'paket' => $_GET['paket'] ?? null])
+          @if (Auth::user() && Auth::user()->email_verified_at == null)
+            <div class="alert alert-info">
+              Silahkan Lakukan Konfirmasi E-Mail Terlebih Dulu Untuk Melakukan Reservasi / Booking.
+            </div>
+          @else 
+					  @livewire('booking.main-form', ['mode' => 'frontend', 'paket' => $_GET['paket'] ?? null])
+          @endif
         </div>
         <div class="col-md-1">&ensp;</div>
       </div>

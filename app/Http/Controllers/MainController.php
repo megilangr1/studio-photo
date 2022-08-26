@@ -102,7 +102,7 @@ class MainController extends Controller
             ]);
 
             session()->flash('verified', 'OK');
-            return redirect(route('login'));
+            return redirect()->back();
         } catch (\Exception $e) {
             return redirect(route('frontend'));
         }
