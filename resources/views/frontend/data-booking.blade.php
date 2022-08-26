@@ -89,9 +89,15 @@
                           </button>
                           @break
                         @default
-                        <button href="#" class="btn btn-warning" style="padding: 3px 3px; font-size: 12px;">
-                          Belum di-Konfirmasi
-                        </button>
+                        @if ($item->created_at < now())
+                          <a href="{{ route('cara-bayar', $item->kode_booking) }}" target="_blank" class="btn btn-warning" style="padding: 3px 3px; font-size: 12px;" data-toggle="offcanvas" role="button" data-tooltip="tooltip" title="Klik Untuk Melihat Cara Bayar..">
+                            Belum di-Konfirmasi
+                          </a>
+                        @else
+                          <button class="btn btn-warning" style="padding: 3px 3px; font-size: 12px;">
+                            Belum di-Konfirmasi
+                          </button>
+                        @endif
                     @endswitch
                   </td>
                   <td class="align-middle text-center">
@@ -115,9 +121,11 @@
                             @break
                         @default
                         <div class="btn-group">
-                          <button type="button" class="btn btn-warning uploadPembayaran" data-bs-toggle="modal" data-id="{{ $item->id }}" data-kode="{{ $item->kode_booking }}" data-bs-target="#exampleModal" style="padding: 3px 3px; font-size: 12px; border-radius: 0px !important;">
-                            Pembayaran
-                          </button>
+                          @if ($item->created_at < now())
+                            <button type="button" class="btn btn-warning uploadPembayaran" data-bs-toggle="modal" data-id="{{ $item->id }}" data-kode="{{ $item->kode_booking }}" data-bs-target="#exampleModal" style="padding: 3px 3px; font-size: 12px; border-radius: 0px !important;">
+                              Pembayaran
+                            </button>
+                          @endif
                           <form action="{{ route('booking-cancel', $item->id) }}" method="post">
                             @csrf 
                             @method('PUT')
