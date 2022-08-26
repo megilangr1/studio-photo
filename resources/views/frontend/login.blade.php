@@ -46,6 +46,18 @@
                     Username / Password Salah !
                   </div>
                 @endif
+
+                @if (session()->has('verified'))
+                  <div class="alert alert-success text-center">
+                    E-Mail Berhasil di-Verifikasi !
+                  </div>
+                @endif
+
+                @if (session()->has('must-verify'))
+                  <div class="alert alert-info text-center">
+                    Silahkan Cek E-Mail Anda Untuk Melakukan Konfirmasi Akun !
+                  </div>
+                @endif
               </div>
             </div>
           </form>

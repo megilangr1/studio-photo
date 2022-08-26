@@ -38,6 +38,8 @@ Route::post('/logout',[AuthController::class, 'logout'])->name('logout');
 
 Route::get('/paket/{paket}', [MainController::class, 'paket'])->name('paket');
 
+Route::get('/verify-email/{token}', [AuthController::class, 'verifyEmail'])->name('verify-email');
+
 Route::middleware(['auth'])->group(function () {
     Route::get('/booking', [MainController::class, 'booking'])->name('booking');
     Route::put('/booking/{id}/cancel', [MainController::class, 'cancelBooking'])->name('booking-cancel');

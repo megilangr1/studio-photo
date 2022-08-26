@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\VerifyEmail;
 use App\Models\Pelanggan;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 
 class AuthController extends Controller
 {
@@ -78,10 +80,12 @@ class AuthController extends Controller
 
         DB::beginTransaction();
         try {
+            $token = md5($request->email);
             $createUser = User::create([
                 'name' => $request->name,
                 'email' => $request->email,
                 'password' => Hash::make($request->password),
+                'remember_token' => $token,
             ]);
 
             $createPelanggan = Pelanggan::create([
@@ -94,15 +98,43 @@ class AuthController extends Controller
             $createUser->assignRole(3);
             DB::commit();
 
-            if (auth()->attempt(['email' => $request->email, 'password' => $request->password])) {
-                return redirect()->route('frontend');
-            }
+            $email = $request->email;
+            $data = [
+                'title' => 'Selamat datang!',
+                'url' => env('APP_URL') . '/verify-email/' . $token,
+                'token' => $token,
+                'user' => $createUser->toArray(),
+                'pelanggan' => $createPelanggan->toArray(),
+            ];
+            Mail::to($email)->send(new VerifyEmail($data));
 
+            session()->flash('must-verify', 'OK');
+            return redirect(route('login'));
+
+            // if (auth()->attempt(['email' => $request->email, 'password' => $request->password])) {
+            //     return redirect()->route('frontend');
+            // }
 
         } catch (\Exception $e) {
             dd($e);
             DB::rollback();
             return redirect()->back()->withInput($request->all());
+        }
+    }
+
+    public function verifyEmail($token)
+    {
+        try {
+            $user = User::where('remember_token', '=', $token)->firstOrFail();
+            $user->update([
+                'email_verified_at' => date('Y-m-d'),
+                'remember_token' => null,
+            ]);
+
+            session()->flash('verified', 'OK');
+            return redirect(route('login'));
+        } catch (\Exception $e) {
+            return redirect(route('frontend'));
         }
     }
 }
