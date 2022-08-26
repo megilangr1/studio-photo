@@ -46,6 +46,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/booking', [MainController::class, 'booking'])->name('booking');
     Route::put('/booking/{id}/cancel', [MainController::class, 'cancelBooking'])->name('booking-cancel');
     Route::post('/upload-pembayaran', [MainController::class, 'uploadPembayaran'])->name('upload-pembayaran');
+    Route::get('/caraBayar/{id}', [MainController::class, 'caraBayar'])->name('cara-bayar');
 
     Route::get('/data-booking', [MainController::class, 'dataBooking'])->name('data-booking');
     Route::get('/hasil-foto/{booking}', [MainController::class, 'hasilBooking'])->name('hasil-foto');

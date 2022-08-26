@@ -269,7 +269,8 @@ class MainForm extends Component
             session()->flash('success', 'Data Booking / Reservasi di-Buat !');
 
             if ($this->mode == 'frontend') {
-                return redirect()->route('data-booking');
+                // return redirect()->route('data-booking');
+                return redirect(route('cara-bayar', $booking->kode_booking));
             } else {
                 return redirect()->route('backend.booking.index');
             }

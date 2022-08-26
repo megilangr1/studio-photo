@@ -30,7 +30,7 @@
               Silahkan Lakukan Konfirmasi E-Mail Terlebih Dulu Untuk Melakukan Reservasi / Booking.
             </div>
           @else 
-					  @livewire('booking.main-form', ['mode' => 'frontend', 'paket' => $_GET['paket'] ?? null])
+            @livewire('booking.main-form', ['mode' => 'frontend', 'paket' => $_GET['paket'] ?? null])
           @endif
         </div>
         <div class="col-md-1">&ensp;</div>
