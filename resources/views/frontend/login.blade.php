@@ -43,7 +43,7 @@
                 
                 @if (count($errors) > 0 || session()->has('error-login'))
                   <div class="alert alert-warning text-center">
-                    Username / Password Salah !
+                    E-Mail / Password Salah !
                   </div>
                 @endif
 

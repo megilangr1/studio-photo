@@ -83,7 +83,30 @@
         </div>
       </div>
     </section>
+    @if (auth()->user() && auth()->user()->email_verified_at == null)
+      <section id="topbar" class="d-flex align-items-center" style="height: auto !important;">
+        <div class="container">
+          <div class="d-flex" style="font-size: 12px !important; padding: 3px 0px;">
+            Akun Belum Melakukan Verifikasi E-Mail. Silahkan Lakukan Verifikasi E-Mail Terlebih Dahulu. &ensp; <a href="#" onclick="document.getElementById('resend').submit()"> Kirim Ulang Link </a>
+          </div>
+          <form action="{{ route('resend') }}" method="post" id="resend">
+            @csrf
+          </form>
+        </div>
+      </section>
+    @endif
 
+    @if (session()->has('resend-verify'))
+    <section id="topbar" class="d-flex align-items-center" style="height: auto !important;">
+      <div class="container">
+        <div class="d-flex" style="font-size: 10px !important;">
+          Link Konfirmasi Email Berhasil di-Kirim Ulang. Silahkan Cek Email Anda !
+        </div>
+      </div>
+    </section>
+    @endif
+
+    
     <!-- ======= Header ======= -->
     <header id="header" class="d-flex align-items-center">
       <div class="container d-flex align-items-center justify-content-between">
@@ -100,6 +123,7 @@
             <li><a class="nav-link scrollto " href="{{ route('frontend') }}#paket">Paket</a></li>
             <li><a class="nav-link scrollto" href="{{ route('booking') }}">Booking</a></li>
             <li><a class="nav-link scrollto" href="{{ route('data-booking') }}">Data Reservasi</a></li>
+            <li><a class="nav-link scrollto" href="{{ route('faq') }}">FAQ</a></li>
             {{-- <li class="dropdown"><a href="#"><span>Keuangan</span> <i class="bi bi-chevron-down"></i></a>
               <ul>
                 <li><a href="#">Kas Masuk</a></li>

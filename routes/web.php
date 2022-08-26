@@ -38,7 +38,9 @@ Route::post('/logout',[AuthController::class, 'logout'])->name('logout');
 
 Route::get('/paket/{paket}', [MainController::class, 'paket'])->name('paket');
 
-Route::get('/verify-email/{token}', [AuthController::class, 'verifyEmail'])->name('verify-email');
+Route::get('/verify-email/{token}', [MainController::class, 'verifyEmail'])->name('verify-email');
+Route::post('/resend-email-verification', [MainController::class, 'resend'])->name('resend');
+Route::get('/faq', [MainController::class, 'faq'])->name('faq');
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/booking', [MainController::class, 'booking'])->name('booking');

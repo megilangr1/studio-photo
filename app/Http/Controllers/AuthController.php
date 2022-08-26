@@ -121,20 +121,4 @@ class AuthController extends Controller
             return redirect()->back()->withInput($request->all());
         }
     }
-
-    public function verifyEmail($token)
-    {
-        try {
-            $user = User::where('remember_token', '=', $token)->firstOrFail();
-            $user->update([
-                'email_verified_at' => date('Y-m-d'),
-                'remember_token' => null,
-            ]);
-
-            session()->flash('verified', 'OK');
-            return redirect(route('login'));
-        } catch (\Exception $e) {
-            return redirect(route('frontend'));
-        }
-    }
 }

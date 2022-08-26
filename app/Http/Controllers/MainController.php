@@ -2,10 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\VerifyEmail;
 use App\Models\Booking;
 use App\Models\Paket;
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 
 class MainController extends Controller
 {
@@ -87,9 +91,63 @@ class MainController extends Controller
             return redirect(route('data-booking'));
         }
     }
+
+    public function verifyEmail($token)
+    {
+        try {
+            $user = User::where('remember_token', '=', $token)->firstOrFail();
+            $user->update([
+                'email_verified_at' => date('Y-m-d H:i:s'),
+                'remember_token' => null,
+            ]);
+
+            session()->flash('verified', 'OK');
+            return redirect(route('login'));
+        } catch (\Exception $e) {
+            return redirect(route('frontend'));
+        }
+    }
+
+    public function resend(Request $request)
+    {
+        if (Auth::check()) {
+            if (Auth::user()->email_verified_at == null) {
+                try {
+                    $user = User::with('pelanggan')->where('id', '=', Auth::user()->id)->firstOrFail();
+                    $user = $user->toArray();
+                    $email = $user['email'];
+                    $token = $user['remember_token'];
+                    if ($token == null) {
+                        $token = md5($email);
+                        $updateUser = User::where('id', '=', Auth::user()->id)->update([
+                            'remember_token' => $token
+                        ]);
+                    }
+                    $data = [
+                        'title' => 'Selamat datang!',
+                        'url' => env('APP_URL') . '/verify-email/' . $token,
+                        'token' => $token,
+                        'user' => $user,
+                        'pelanggan' => $user['pelanggan'],
+                    ];
+                    Mail::to($email)->send(new VerifyEmail($data));
+    
+                    session()->flash('resend-verify', 'OK');
+                    return redirect(route('frontend'));
+                } catch (\Exception $e) {
+                    return redirect(route('frontend'));
+                }
+            }
+        }
+    }
     
     public function paket(Paket $paket)
     {
         return view('frontend.paket', compact('paket'));
+    }
+
+    public function faq()
+    {
+        return view('frontend.faq');
     }
 }
